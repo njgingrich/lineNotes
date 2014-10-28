@@ -1,6 +1,5 @@
 package json;
 
-import com.google.gson.Gson;
 import file.FileOutput;
 import file.FormatOutputData;
 import java.io.IOException;
@@ -36,14 +35,13 @@ public class JSONWriter {
     }
     
     public void storeData(String characterName) throws IOException {
-        Gson gson = new Gson();
         FileOutput f = new FileOutput();
         
         String json = "";
         for (LineNote note : notes) {
             //json += gson.toJson(note);
             FormatOutputData data = new FormatOutputData();
-            System.out.println(data.format(note));
+            //System.out.println(data.format(note));
             //System.out.println(json);
         }
         f.writeFile(f.setFileName(characterName), json);

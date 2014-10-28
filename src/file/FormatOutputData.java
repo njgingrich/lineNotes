@@ -16,28 +16,19 @@
  */
 package file;
 
+import com.itextpdf.text.DocumentException;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import meta.LineNote;
+import meta.Role;
 
 /**
  *
  * @author Nathan
  */
 public class FormatOutputData {
-    private String boldText = " {\"style\":\"bold\", }";
-    private String boldChunk = "[\"chunk\"," + boldText;
-    private String pdfMetaData = "{\"right-margin\":50,\n" +
-                                 "\"subject\":\"Urinetown Line Notes\",\n" +
-                                 "\"creator\":\"Nathan Gingrich\",\n" +
-                                 "\"doc-header\":[\"Line Notes\"],\n" +
-                                 "\"bottom-margin\":55,\n" +
-                                 "\"author\":\"John Doe\",\n" +
-                                 "\"header\":\"page header\",\n" +
-                                 "\"left-margin\":50,\n" +
-                                 "\"title\":\"LineNotes\",\n" +
-                                 "\"size\":\"a4\",\n" +
-                                 "\"footer\":\"page\",\n" +
-                                 "\"top-margin\":50},\n";
-    private String errorOutput;
+    private String[] errorOutput = new String[] {"Wrong Word", "Wrong Order", "Dropped", "Added", "Called Line", "Check Complete Line", "Jumped Line"};
+    private int errorIX;
     
     public FormatOutputData() {
     }
@@ -52,90 +43,35 @@ public class FormatOutputData {
     To do this, we have to set some attributes in the JSON file so that the text
     will be bold.
     */
-    public String format(LineNote note) {
-        switch(note.getNote()) {
-            case("Wrong Word"):
-                // First, find the error within the line and boldify it.
-                String line = note.getLine();
-                /*int errorLocation = line.indexOf(note.getNote());
-                line = new StringBuilder(line).insert(errorLocation, ", " + boldChunk + note.getError() + "], \"").toString();*/
-                line = line.replace(note.getError(), ", " + boldChunk + note.getError() + "], \"");
-                
-                // Then, make sure the output of the possible notes has the
-                // correct one bolded.
-                errorOutput = "[\"phrase\", "
-                            + "[\"chunk\", {\"style\":\"bold\"}, \"Wrong Word    \"], "
-                            + "[\"chunk\", \"Wrong Order    \"], "
-                            + "[\"chunk\", \"Dropped    \"], "
-                            + "[\"chunk\", \"Added    \"], "
-                            + "[\"chunk\", \"Called Line    \"], "
-                            + "[\"chunk\", \"Check Complete Line    \"], "
-                            + "[\"chunk\", \"Jumped Line\"]";
-                break;
-            case("Wrong Order"):
-                errorOutput = "[\"phrase\", "
-                            + "[\"chunk\", \"Wrong Word    \"], "
-                            + "[\"chunk\", {\"style\":\"bold\"}, \"Wrong Order    \"], "
-                            + "[\"chunk\", \"Dropped    \"], "
-                            + "[\"chunk\", \"Added    \"], "
-                            + "[\"chunk\", \"Called Line    \"], "
-                            + "[\"chunk\", \"Check Complete Line    \"], "
-                            + "[\"chunk\", \"Jumped Line\"]";
-                break;
-            case("Dropped"):
-                
-                errorOutput = "[\"phrase\", "
-                            + "[\"chunk\", \"Wrong Word    \"], "
-                            + "[\"chunk\", \"Wrong Order    \"], "
-                            + "[\"chunk\", {\"style\":\"bold\"}, \"Dropped    \"], "
-                            + "[\"chunk\", \"Added    \"], "
-                            + "[\"chunk\", \"Called Line    \"], "
-                            + "[\"chunk\", \"Check Complete Line    \"], "
-                            + "[\"chunk\", \"Jumped Line\"]";
-                break;
-            case("Added"):
-                errorOutput = "[\"phrase\", "
-                            + "[\"chunk\", \"Wrong Word    \"], "
-                            + "[\"chunk\", \"Wrong Order    \"], "
-                            + "[\"chunk\", \"Dropped    \"], "
-                            + "[\"chunk\", {\"style\":\"bold\"}, \"Added    \"], "
-                            + "[\"chunk\", \"Called Line    \"], "
-                            + "[\"chunk\", \"Check Complete Line    \"], "
-                            + "[\"chunk\", \"Jumped Line\"]";
-                break;
-            case("Called Line"):
-                errorOutput = "[\"phrase\", "
-                            + "[\"chunk\", \"Wrong Word    \"], "
-                            + "[\"chunk\", \"Wrong Order    \"], "
-                            + "[\"chunk\", \"Dropped    \"], "
-                            + "[\"chunk\", \"Added    \"], "
-                            + "[\"chunk\", {\"style\":\"bold\"}, \"Called Line    \"], "
-                            + "[\"chunk\", \"Check Complete Line    \"], "
-                            + "[\"chunk\", \"Jumped Line\"]";
-                break;
-            case("Check Line"):
-                errorOutput = "[\"phrase\", "
-                            + "[\"chunk\", \"Wrong Word    \"], "
-                            + "[\"chunk\", \"Wrong Order    \"], "
-                            + "[\"chunk\", \"Dropped    \"], "
-                            + "[\"chunk\", \"Added    \"], "
-                            + "[\"chunk\", \"Called Line    \"], "
-                            + "[\"chunk\", {\"style\":\"bold\"}, \"Check Complete Line    \"], "
-                            + "[\"chunk\", \"Jumped Line\"]";
-                break;
-            case("Jumped Line"):
-                errorOutput = "[\"phrase\", "
-                            + "[\"chunk\", \"Wrong Word    \"], "
-                            + "[\"chunk\", \"Wrong Order    \"], "
-                            + "[\"chunk\", \"Dropped    \"], "
-                            + "[\"chunk\", \"Added    \"], "
-                            + "[\"chunk\", \"Called Line    \"], "
-                            + "[\"chunk\", \"Check Complete Line    \"], "
-                            + "[\"chunk\", {\"style\":\"bold\"}, \"Jumped Line\"]";
-                break;
+    public void format(ArrayList<Role> characters) throws DocumentException, FileNotFoundException {
+        PDFWriter writer = new PDFWriter();
+        for (Role role : characters) {
+            for (LineNote note: role.getNotes()) {
+                switch(note.getNote()) {
+                    case("Wrong Word"):
+                        errorIX = 0;
+                        break;
+                    case("Wrong Order"):
+                        errorIX = 1;
+                        break;
+                    case("Dropped"):
+                        errorIX = 2;
+                        break;
+                    case("Added"):
+                        errorIX = 3;
+                        break;
+                    case("Called Line"):
+                        errorIX = 4;
+                        break;
+                    case("Check Line"):
+                        errorIX = 5;
+                        break;
+                    case("Jumped Line"):
+                        errorIX = 6;
+                        break;
+                }
+            writer.outputToPDF(role, errorOutput, errorIX);
+            }
         }
-    
-    
-    return pdfMetaData + errorOutput;
     }
 }

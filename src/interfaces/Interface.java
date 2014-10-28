@@ -16,6 +16,10 @@
  */
 package interfaces;
 
+import com.itextpdf.text.DocumentException;
+import file.FormatOutputData;
+import file.PDFWriter;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -201,10 +205,12 @@ public class Interface extends javax.swing.JFrame {
                 writer.storeData(role.getName());
             }*/
             if (!role.getNotes().isEmpty()) {
-                JSONWriter writer = new JSONWriter(role.getNotes());
+                FormatOutputData data = new FormatOutputData();
                 try {
-                    writer.storeData(role.getName());
-                } catch (IOException ex) {
+                    data.format(show.getCharacterList());
+                } catch (DocumentException ex) {
+                    Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (FileNotFoundException ex) {
                     Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
