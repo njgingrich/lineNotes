@@ -36,7 +36,7 @@ public class XMLWriter {
         String newDirectory = directory + characterName.replaceAll(" ", "") + ".xml";
         
         XStream xstream = new XStream();
-        //xstream.alias("note", LineNote.class);
+        xstream.alias("LineNote", LineNote.class);
         String xml = "";
         for (LineNote note : notes) {
             xml += xstream.toXML(note) + "\n";

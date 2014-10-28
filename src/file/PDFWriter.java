@@ -38,12 +38,8 @@ import meta.Role;
  * @author Nathan
  */
 public class PDFWriter {
-    private String directory = "C:/Users/Nathan/Documents/Programming/Projects/2014/lineNotes/src/data/notes";
-    
-    /*
-    IMPORTANT:
-    Need to convert this function to use a Role, so you can get the character name
-    */
+    private String directory = "C:/Users/Nathan/Documents/Programming/Projects/2014/lineNotes/src/data/notes/";
+
     public void outputToPDF(Role role, String[] chunks, int errorIX, Calendar calendar) 
             throws DocumentException, FileNotFoundException {
         
@@ -58,7 +54,7 @@ public class PDFWriter {
         Document document = new Document();
         PdfWriter.getInstance(document, fileout);
         document.addAuthor("Nathan Gingrich");
-        document.addTitle("Line Notes");
+        document.addTitle("Line Notes = " + role.getName());
 
         document.open();
         Font lineFont = new Font(FontFamily.TIMES_ROMAN);
@@ -95,7 +91,8 @@ public class PDFWriter {
             pageCell.setPadding(20);
             pageCell.setPaddingLeft(0);
             pageCell.setBorder(PdfPCell.NO_BORDER);
-            PdfPCell lineCell = new PdfPCell(new Paragraph("Line: " + note.getLine(), lineFontUnderline));
+            PdfPCell lineCell = new PdfPCell(new Paragraph("Line: " + note.getLine() 
+                    + "                                                            ", lineFontUnderline));
             lineCell.setPadding(20);
             lineCell.setBorder(PdfPCell.NO_BORDER);
             lineTable.setWidthPercentage(100);

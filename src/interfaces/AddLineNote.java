@@ -17,6 +17,7 @@
 package interfaces;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 import meta.LineNote;
 
 /**
@@ -75,12 +76,6 @@ public class AddLineNote extends javax.swing.JDialog {
         characterLabel.setText("Character:");
 
         pageLabel.setText("Page:");
-
-        pageTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                pageTextFieldActionPerformed(evt);
-            }
-        });
 
         jScrollPane1.setViewportView(lineNoteEditor);
 
@@ -219,10 +214,6 @@ public class AddLineNote extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void pageTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pageTextFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_pageTextFieldActionPerformed
-
     private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
         clearText();
     }//GEN-LAST:event_clearButtonActionPerformed
@@ -236,6 +227,23 @@ public class AddLineNote extends javax.swing.JDialog {
             
             return;
         }
+        if (!isValidatedString(lineNoteEditor.getText(), "^[a-zA-Z0-9\\.\\$\\?\":;',\\-\\(\\)]+$")) {
+            JOptionPane.showMessageDialog(null,
+            "You need to enter a string for the line.",
+            "Validation Error",
+            notFilledOptionPane.ERROR_MESSAGE);
+            
+            return;
+        }
+        if (!isValidatedString(pageTextField.getText(), "^[0-9]+$")) {
+            JOptionPane.showMessageDialog(null,
+            "You need to enter a number for the page.",
+            "Validation Error",
+            notFilledOptionPane.ERROR_MESSAGE);
+            
+            return;
+        }
+         
         
         characterName = characterSelector. getSelectedItem().toString();
         String line = lineNoteEditor.getText();
@@ -248,41 +256,68 @@ public class AddLineNote extends javax.swing.JDialog {
     }//GEN-LAST:event_addNoteButtonActionPerformed
 
     private void RBWrongWordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RBWrongWordActionPerformed
-        error = lineNoteOptionPane.showInputDialog(null, 
-            "Enter the error.", 
-            "Enter Error",
-            lineNoteOptionPane.INFORMATION_MESSAGE);
+        error = showDialog("Enter the error.");
     }//GEN-LAST:event_RBWrongWordActionPerformed
 
     private void RBWrongOrderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RBWrongOrderActionPerformed
-        error = lineNoteOptionPane.showInputDialog(null, 
-            "Enter the error, putting the pipe\n"
-                    + "symbol \"|\" in between the phrases", 
-            "Enter Error",
-            lineNoteOptionPane.INFORMATION_MESSAGE);
+        error = showDialog("Enter the error, putting the pipe\n"
+                    + "symbol \"|\" in between the phrases");
     }//GEN-LAST:event_RBWrongOrderActionPerformed
 
     private void RBDroppedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RBDroppedActionPerformed
-        error = lineNoteOptionPane.showInputDialog(null, 
-            "Enter the dropped word.", 
-            "Enter Error",
-            lineNoteOptionPane.INFORMATION_MESSAGE);
+        error = showDialog("Enter the dropped word.");
     }//GEN-LAST:event_RBDroppedActionPerformed
 
     private void RBAddedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RBAddedActionPerformed
-        error = lineNoteOptionPane.showInputDialog(null, 
-            "Enter the added word(s).", 
-            "Enter Error",
-            lineNoteOptionPane.INFORMATION_MESSAGE);
+        error = showDialog("Enter the added word(s).");
     }//GEN-LAST:event_RBAddedActionPerformed
 
     private void RBJumpedLineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RBJumpedLineActionPerformed
-        error = lineNoteOptionPane.showInputDialog(null, 
-            "Enter the last line that was jumped over.", 
-            "Enter Error",
-            lineNoteOptionPane.INFORMATION_MESSAGE);
+        error = showDialog("Enter the last line that was jumped over.");
     }//GEN-LAST:event_RBJumpedLineActionPerformed
 
+    private String showDialog(String message) {
+        String response = "";
+        String regex = "^[a-zA-Z0-9\\.\\$\\?\":;',\\-\\(\\)]+$";
+        
+        // Also allow the | character for wrong word
+        if (message == "Enter the error, putting the pipe\n"
+                    + "symbol \"|\" in between the phrases") {
+            regex = "^[a-zA-Z0-9\\.\\$\\?\":;',\\-\\(\\)\\|]+$";
+        }
+        boolean isNotValidString = true;
+        while (isNotValidString) {
+            response = lineNoteOptionPane.showInputDialog(null, 
+                       message, 
+                       "Enter Error",
+                       lineNoteOptionPane.INFORMATION_MESSAGE);
+            // Special cases for wrong order
+            if (message == "Enter the error, putting the pipe\n"
+                    + "symbol \"|\" in between the phrases" && !response.contains("|")) {
+                    
+                JOptionPane.showMessageDialog(null, "You need to use the '|' character.", "Validation Error", JOptionPane.ERROR_MESSAGE);
+                continue;
+            }
+            if (message == "Enter the error, putting the pipe\n"
+                    + "symbol \"|\" in between the phrases" && 
+                response.indexOf("|") == 0 ||
+                response.indexOf("|") == response.length()-1) {
+                    
+                JOptionPane.showMessageDialog(null, "You need data on both sides of" +
+                                                    " the '|' character.", "Validation Error", JOptionPane.ERROR_MESSAGE);
+                continue;
+            }
+            
+            if (isValidatedString(response, regex)) {
+                isNotValidString = false;
+            } else {
+                JOptionPane.showMessageDialog(null, "You need to enter a valid input.", "Validation Error", JOptionPane.ERROR_MESSAGE);
+            }
+        };
+        
+        return response;
+    }
+    
     public LineNote getLineNote() {
         return note;
     }
@@ -314,6 +349,13 @@ public class AddLineNote extends javax.swing.JDialog {
         pageTextField.setText("");
         lineNoteEditor.setText(""); 
         buttonGroup1.clearSelection();
+    }
+    
+    private boolean isValidatedString(String str, String regex) {
+        if (str.matches(regex)) { 
+            return true;
+        }
+        return false;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
