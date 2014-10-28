@@ -21,8 +21,8 @@ import file.FormatOutputData;
 import file.PDFWriter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
@@ -198,6 +198,18 @@ public class Interface extends javax.swing.JFrame {
     }//GEN-LAST:event_newShowButtonActionPerformed
 
     private void exportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportButtonActionPerformed
+        // Format the date from the infobox
+        String dateString = JOptionPane.showInputDialog(null, 
+                                "Enter the date of the rehearsal (MM/DD/YYYY).", 
+                                "Enter Date", 
+                                JOptionPane.INFORMATION_MESSAGE);
+        int[] dateArray = {0,0,0};
+        String[] splitDate = dateString.split("/");
+        for (int i = 0; i < splitDate.length; i++) {
+           dateArray[i] = Integer.parseInt(splitDate[i]);
+        }
+        Calendar calendar = new GregorianCalendar(dateArray[2], dateArray[0], dateArray[1]);
+        
         for (Role role : show.getCharacterList()) {
             /*if (!role.getNotes().isEmpty()) {
                 XMLWriter writer = new XMLWriter(role.getNotes());
@@ -206,7 +218,7 @@ public class Interface extends javax.swing.JFrame {
             if (!role.getNotes().isEmpty()) {
                 FormatOutputData data = new FormatOutputData();
                 try {
-                    data.format(show.getCharacterList());
+                    data.format(show.getCharacterList(), calendar);
                 } catch (DocumentException ex) {
                     ex.printStackTrace();
                 } catch (FileNotFoundException ex) {

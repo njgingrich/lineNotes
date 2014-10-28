@@ -19,6 +19,7 @@ package file;
 import com.itextpdf.text.DocumentException;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import meta.LineNote;
 import meta.Role;
 
@@ -27,7 +28,7 @@ import meta.Role;
  * @author Nathan
  */
 public class FormatOutputData {
-    private String[] errorOutput = new String[] {"Wrong Word", "Wrong Order", "Dropped", "Added", "Called Line", "Check Complete Line", "Jumped Line"};
+    private String[] errorOutput = new String[] {"Wrong Word", "Wrong Order", "Dropped", "Added", "Called Line", "Check Line", "Jumped Line"};
     private int errorIX;
     
     public FormatOutputData() {
@@ -43,7 +44,7 @@ public class FormatOutputData {
     To do this, we have to set some attributes in the JSON file so that the text
     will be bold.
     */
-    public void format(ArrayList<Role> characters) throws DocumentException, FileNotFoundException {
+    public void format(ArrayList<Role> characters, Calendar calendar) throws DocumentException, FileNotFoundException {
         PDFWriter writer = new PDFWriter();
         for (Role role : characters) {
             for (LineNote note: role.getNotes()) {
@@ -70,7 +71,7 @@ public class FormatOutputData {
                         errorIX = 6;
                         break;
                 }
-            writer.outputToPDF(role, errorOutput, errorIX);
+            writer.outputToPDF(role, errorOutput, errorIX, calendar);
             }
         }
     }

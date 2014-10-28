@@ -29,6 +29,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.Calendar;
 import meta.LineNote;
 import meta.Role;
 
@@ -42,9 +43,15 @@ public class PDFWriter {
     IMPORTANT:
     Need to convert this function to use a Role, so you can get the character name
     */
-    public void outputToPDF(Role role, String[] chunks, int errorIX) 
+    public void outputToPDF(Role role, String[] chunks, int errorIX, Calendar calendar) 
             throws DocumentException, FileNotFoundException {
-        File file = new File("test.pdf");
+        
+        File file = new File("UT_LineNotes" + 
+                             role.getName().replaceAll(" ", "") + 
+                             calendar.get(Calendar.MONTH) + "." +
+                             calendar.get(Calendar.DAY_OF_MONTH) + "." +
+                             calendar.get(Calendar.YEAR) +
+                             ".pdf");
         FileOutputStream fileout = new FileOutputStream(file);
         Document document = new Document();
         PdfWriter.getInstance(document, fileout);
@@ -61,50 +68,8 @@ public class PDFWriter {
         errorFontBold.setStyle(Font.BOLDITALIC);
         
         /*
-        Trying it the normal way
-        */
-        /*Paragraph header = new Paragraph();
-        Chunk dateTitle = new Chunk("Date: ");
-        Chunk date = new Chunk(" 10/27 ");
-        date.setFont(lineFont);
-        Chunk nameTitle = new Chunk("Character: ");
-        Chunk name = new Chunk(" " + role.getName() + " ");
-        name.setFont(lineFont);
-        Chunk spacer  = new Chunk("                                                         ");
-        
-        header.add(dateTitle);
-        header.add(date);
-        header.add(spacer);
-        header.add(nameTitle);
-        header.add(name);
-        document.add(header);
-        document.add(Chunk.NEWLINE);
-        
-        for (LineNote note : role.getNotes()) {
-            Paragraph line = new Paragraph("Page: " + note.getPageNum() + "      Line: ", lineFont);
-            line.add(note.getLine());
-            document.add(line);
-            document.add(Chunk.NEWLINE);
-
-            for (int i = 0; i < chunks.length; i++) {
-                Chunk chunk = new Chunk(chunks[i]);
-                errorFont.setStyle(Font.ITALIC);
-                if (i == errorIX) {
-                    errorFont.setStyle(Font.BOLDITALIC);
-                }
-                chunk.setFont(errorFont);
-                document.add(chunk);
-                if (i != chunks.length-1) {
-                    document.add(new Chunk("    "));
-                }
-            }
-            document.add(Chunk.NEWLINE);
-            document.add(Chunk.NEWLINE);
-        }*/
-        
-        /*
         Trying to use a table so the layout works better
-        */
+        */        
         PdfPTable headerTable = new PdfPTable(2);
         headerTable.setWidthPercentage(100);
         PdfPCell dateCell = new PdfPCell(new Paragraph("Date: 10/27", lineFont));
