@@ -38,6 +38,7 @@ import meta.Role;
  * @author Nathan
  */
 public class PDFWriter {
+    private String directory = "C:/Users/Nathan/Documents/Programming/Projects/2014/lineNotes/src/data/notes";
     
     /*
     IMPORTANT:
@@ -46,7 +47,8 @@ public class PDFWriter {
     public void outputToPDF(Role role, String[] chunks, int errorIX, Calendar calendar) 
             throws DocumentException, FileNotFoundException {
         
-        File file = new File("UT_LineNotes" + 
+        File file = new File(directory + 
+                             "UT_LineNotes" + 
                              role.getName().replaceAll(" ", "") + 
                              calendar.get(Calendar.MONTH) + "." +
                              calendar.get(Calendar.DAY_OF_MONTH) + "." +

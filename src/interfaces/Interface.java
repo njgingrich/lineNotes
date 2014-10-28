@@ -19,6 +19,7 @@ package interfaces;
 import com.itextpdf.text.DocumentException;
 import file.FormatOutputData;
 import file.PDFWriter;
+import file.XMLWriter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Calendar;
@@ -200,7 +201,7 @@ public class Interface extends javax.swing.JFrame {
     private void exportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportButtonActionPerformed
         // Format the date from the infobox
         String dateString = JOptionPane.showInputDialog(null, 
-                                "Enter the date of the rehearsal (MM/DD/YYYY).", 
+                                "Enter the date of the rehearsal (MM/DD/(YY)YY).", 
                                 "Enter Date", 
                                 JOptionPane.INFORMATION_MESSAGE);
         int[] dateArray = {0,0,0};
@@ -211,19 +212,17 @@ public class Interface extends javax.swing.JFrame {
         Calendar calendar = new GregorianCalendar(dateArray[2], dateArray[0], dateArray[1]);
         
         for (Role role : show.getCharacterList()) {
-            /*if (!role.getNotes().isEmpty()) {
-                XMLWriter writer = new XMLWriter(role.getNotes());
-                writer.storeData(role.getName());
-            }*/
             if (!role.getNotes().isEmpty()) {
                 FormatOutputData data = new FormatOutputData();
                 try {
                     data.format(show.getCharacterList(), calendar);
-                } catch (DocumentException ex) {
-                    ex.printStackTrace();
-                } catch (FileNotFoundException ex) {
+                } catch (DocumentException | FileNotFoundException ex) {
                     ex.printStackTrace();
                 }
+                
+                // Save the output for a later date
+                XMLWriter writer = new XMLWriter(role.getNotes());
+                writer.storeData(role.getName());
             }
         }
     }//GEN-LAST:event_exportButtonActionPerformed

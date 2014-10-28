@@ -28,10 +28,8 @@ import java.io.IOException;
 public class FileOutput {
     private String baseDirectory = "C:/Users/Nathan/Documents/Programming/Projects/2014/lineNotes/src/data/notes";
     
-    public String setFileName(String fileName) {
-        String newFileName = baseDirectory + "/" + fileName + ".json";
-        System.out.println(newFileName);
-        return newFileName;
+    public FileOutput() {
+        
     }
     
     public void writeFile(String fileName, String data) {
