@@ -28,7 +28,6 @@ import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.DefaultComboBoxModel;
-import json.JSONWriter;
 import meta.Role;
 import meta.Show;
 import meta.LineNote;
@@ -209,9 +208,9 @@ public class Interface extends javax.swing.JFrame {
                 try {
                     data.format(show.getCharacterList());
                 } catch (DocumentException ex) {
-                    Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+                    ex.printStackTrace();
                 } catch (FileNotFoundException ex) {
-                    Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+                    ex.printStackTrace();
                 }
             }
         }
