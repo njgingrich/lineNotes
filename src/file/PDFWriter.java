@@ -23,6 +23,7 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -39,9 +40,23 @@ import meta.Role;
  */
 public class PDFWriter {
     private String directory = "C:/Users/Nathan/Documents/Programming/Projects/2014/lineNotes/src/data/notes/";
+    private String[] errorOutput = new String[] {"Wrong Word", "Wrong Order", "Dropped", "Added", "Called Line", "Check Line", "Jumped Line"};
+    Document document;
+    Role role;
+    Calendar calendar;
+    Font lineFont = new Font(FontFamily.TIMES_ROMAN);
+    Font lineFontUnderline = new Font(FontFamily.TIMES_ROMAN);
+    Font errorFont = new Font(FontFamily.TIMES_ROMAN);
+    Font lineFontBold = new Font(FontFamily.TIMES_ROMAN);
+    Font errorFontBold = new Font(FontFamily.TIMES_ROMAN);
 
-    public void outputToPDF(Role role, String[] chunks, int errorIX, Calendar calendar) 
-            throws DocumentException, FileNotFoundException {
+    public PDFWriter(Role role, Calendar calendar) throws FileNotFoundException, DocumentException {
+        this.role = role;
+        this.calendar = calendar;
+        lineFontUnderline.setStyle(Font.UNDERLINE);
+        lineFontBold.setStyle(Font.BOLD);
+        errorFont.setStyle(Font.ITALIC);
+        errorFontBold.setStyle(Font.BOLDITALIC);
         
         File file = new File(directory + 
                              "UT_LineNotes" + 
@@ -51,26 +66,86 @@ public class PDFWriter {
                              calendar.get(Calendar.YEAR) +
                              ".pdf");
         FileOutputStream fileout = new FileOutputStream(file);
-        Document document = new Document();
+        document = new Document();
         PdfWriter.getInstance(document, fileout);
         document.addAuthor("Nathan Gingrich");
         document.addTitle("Line Notes = " + role.getName());
-
         document.open();
-        Font lineFont = new Font(FontFamily.TIMES_ROMAN);
-        Font lineFontUnderline = new Font(FontFamily.TIMES_ROMAN);
-        lineFontUnderline.setStyle(Font.UNDERLINE);
-        Font errorFont = new Font(FontFamily.TIMES_ROMAN);
-        errorFont.setStyle(Font.ITALIC);
-        Font errorFontBold = new Font(FontFamily.TIMES_ROMAN);
-        errorFontBold.setStyle(Font.BOLDITALIC);
+    }
+    
+    public void outputToPDF(String page, int errorIX, String[] splitLines) 
+            throws DocumentException, FileNotFoundException {
         
         /*
-        Trying to use a table so the layout works better
-        */        
+        Using a table so the layout works better
+        */                
+        System.out.println("Outputting data for note. (for loop within outputToPDF()");
+
+        PdfPTable lineTable = new PdfPTable(2);
+        PdfPCell pageCell = new PdfPCell(new Paragraph("Page: " + page, lineFont));
+        pageCell.setPadding(20);
+        pageCell.setPaddingLeft(0);
+        pageCell.setBorder(PdfPCell.NO_BORDER);
+
+        System.out.println("SplitLines within outputToPDF() for loop");
+        for (String splitLine : splitLines) {
+            System.out.println(splitLine);
+        }
+        /*PdfPCell lineCell = new PdfPCell(new Paragraph("Line: " + note.getLine() 
+                + "                                                            ", lineFontUnderline));*/
+        Chunk lineSegment1 = new Chunk(splitLines[0]); 
+        lineSegment1.setFont(lineFont);
+        Chunk error1 = new Chunk(splitLines[1]);
+        error1.setFont(lineFontBold);
+        Chunk lineSegment2 = new Chunk(splitLines[2]);
+        lineSegment2.setFont(lineFont);
+        Chunk error2 = new Chunk(splitLines[3]);
+        error2.setFont(lineFontBold);
+        Chunk lineSegment3 = new Chunk(splitLines[4]);
+        lineSegment3.setFont(lineFont); 
+        
+        Phrase line = new Phrase(lineSegment1);
+        line.add(error1);
+        line.add(lineSegment2);
+        line.add(error2);
+        line.add(lineSegment3);
+
+        PdfPCell lineCell = new PdfPCell(line);
+        lineCell.setPadding(20);
+        lineCell.setBorder(PdfPCell.NO_BORDER);
+        lineTable.setWidthPercentage(100);
+        lineTable.setWidths(new int[] {2, 10});
+        lineTable.setSpacingBefore(1f);
+        lineTable.setSpacingAfter(1f);
+
+        lineTable.addCell(pageCell);
+        lineTable.addCell(lineCell);
+        document.add(lineTable);
+        document.add(Chunk.NEWLINE);
+
+
+        PdfPTable errorTable = new PdfPTable(7);
+        errorTable.setWidthPercentage(100);
+        for (int i = 0; i < errorOutput.length; i++) {
+            errorFont.setStyle(Font.ITALIC);
+            PdfPCell cell;
+            if (i == errorIX) {
+                cell = new PdfPCell(new Paragraph(errorOutput[i], errorFontBold));
+            } else {
+                cell = new PdfPCell(new Paragraph(errorOutput[i], errorFont));
+            }
+            cell.setBorder(PdfPCell.NO_BORDER);
+            errorTable.addCell(cell);
+        }
+        document.add(errorTable);
+    }
+    
+    public void makePDFHeader() throws DocumentException {
         PdfPTable headerTable = new PdfPTable(2);
         headerTable.setWidthPercentage(100);
-        PdfPCell dateCell = new PdfPCell(new Paragraph("Date: 10/27", lineFont));
+        PdfPCell dateCell = new PdfPCell(new Paragraph("Date: " +
+                                                       calendar.get(Calendar.MONTH) + "/" +
+                                                       calendar.get(Calendar.DAY_OF_MONTH), lineFont));
         dateCell.setHorizontalAlignment(Element.ALIGN_LEFT);
         dateCell.setBorder(PdfPCell.NO_BORDER);
         dateCell.setPadding(0.3f);
@@ -83,46 +158,9 @@ public class PDFWriter {
         document.add(headerTable);
         document.add(Chunk.NEWLINE);
         document.add(Chunk.NEWLINE);
-        
-        
-        for (LineNote note : role.getNotes()) {
-            PdfPTable lineTable = new PdfPTable(2);
-            PdfPCell pageCell = new PdfPCell(new Paragraph("Page: " + note.getPageNum(), lineFont));
-            pageCell.setPadding(20);
-            pageCell.setPaddingLeft(0);
-            pageCell.setBorder(PdfPCell.NO_BORDER);
-            PdfPCell lineCell = new PdfPCell(new Paragraph("Line: " + note.getLine() 
-                    + "                                                            ", lineFontUnderline));
-            lineCell.setPadding(20);
-            lineCell.setBorder(PdfPCell.NO_BORDER);
-            lineTable.setWidthPercentage(100);
-            lineTable.setWidths(new int[] {2, 10});
-            lineTable.setSpacingBefore(1f);
-            lineTable.setSpacingAfter(1f);
-            
-            lineTable.addCell(pageCell);
-            lineTable.addCell(lineCell);
-            document.add(lineTable);
-            document.add(Chunk.NEWLINE);
-
-            
-            PdfPTable errorTable = new PdfPTable(7);
-            errorTable.setWidthPercentage(100);
-            for (int i = 0; i < chunks.length; i++) {
-                errorFont.setStyle(Font.ITALIC);
-                PdfPCell cell;
-                if (i == errorIX) {
-                    System.out.println(chunks[i]);
-                    cell = new PdfPCell(new Paragraph(chunks[i], errorFontBold));
-                } else {
-                    cell = new PdfPCell(new Paragraph(chunks[i], errorFont));
-                }
-                cell.setBorder(PdfPCell.NO_BORDER);
-                errorTable.addCell(cell);
-            }
-            document.add(errorTable);
-        }
-        
+    }
+    
+    public void closePDF() {
         document.close();
     }
 }

@@ -50,7 +50,7 @@ public class LineNote {
     }
     
     public String toString() {
-        return "Page " + page + ": " + line + " - " + note;
+        return "Page " + page + ": " + line + " - " + note + " - " + error;
         //return "(" + page + "):\n" + line + "\n" + note;
     }
 }

@@ -19,11 +19,15 @@ package interfaces;
 import com.itextpdf.text.DocumentException;
 import file.FormatOutputData;
 import file.PDFWriter;
+import file.ShowFileFilter;
 import file.XMLWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
@@ -66,6 +70,8 @@ public class Interface extends javax.swing.JFrame {
         jOptionPane1 = new javax.swing.JOptionPane();
         noteRightClickMenu = new javax.swing.JPopupMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
+        saveFileChooser = new javax.swing.JFileChooser();
+        openFileChooser = new javax.swing.JFileChooser();
         jSplitPane1 = new javax.swing.JSplitPane();
         jScrollPane2 = new javax.swing.JScrollPane();
         notesList = new javax.swing.JList();
@@ -73,11 +79,24 @@ public class Interface extends javax.swing.JFrame {
         characterList = new javax.swing.JList();
         exportButton = new javax.swing.JButton();
         addNoteButton = new javax.swing.JButton();
-        newShowButton = new javax.swing.JButton();
         deleteNoteButton = new javax.swing.JButton();
+        menuBar = new javax.swing.JMenuBar();
+        fileMenu = new javax.swing.JMenu();
+        newShowMenuButton = new javax.swing.JMenuItem();
+        openShowMenuButton = new javax.swing.JMenuItem();
+        saveShowMenuButton = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        exitMenuButton = new javax.swing.JMenuItem();
+        editMenu = new javax.swing.JMenu();
+        editShowMenuButton = new javax.swing.JMenuItem();
+        addNewNoteMenuButton = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
+        exportShowMenuButton = new javax.swing.JMenuItem();
 
         jMenuItem1.setText("jMenuItem1");
         noteRightClickMenu.add(jMenuItem1);
+
+        openFileChooser.setFileFilter(new ShowFileFilter());
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Line Notes Editor");
@@ -110,19 +129,65 @@ public class Interface extends javax.swing.JFrame {
             }
         });
 
-        newShowButton.setText("Open Show");
-        newShowButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                newShowButtonActionPerformed(evt);
-            }
-        });
-
         deleteNoteButton.setText("Delete Note");
         deleteNoteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteNoteButtonActionPerformed(evt);
             }
         });
+
+        fileMenu.setText("File");
+
+        newShowMenuButton.setText("New Show");
+        fileMenu.add(newShowMenuButton);
+
+        openShowMenuButton.setText("Open Show...");
+        openShowMenuButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openShowMenuButtonActionPerformed(evt);
+            }
+        });
+        fileMenu.add(openShowMenuButton);
+
+        saveShowMenuButton.setText("Save Show");
+        saveShowMenuButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveShowMenuButtonActionPerformed(evt);
+            }
+        });
+        fileMenu.add(saveShowMenuButton);
+        fileMenu.add(jSeparator1);
+
+        exitMenuButton.setText("Exit");
+        exitMenuButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exitMenuButtonActionPerformed(evt);
+            }
+        });
+        fileMenu.add(exitMenuButton);
+
+        menuBar.add(fileMenu);
+
+        editMenu.setText("Edit");
+
+        editShowMenuButton.setText("Edit Show...");
+        editMenu.add(editShowMenuButton);
+
+        addNewNoteMenuButton.setText("Add New Note...");
+        editMenu.add(addNewNoteMenuButton);
+        editMenu.add(jSeparator2);
+
+        exportShowMenuButton.setText("Export Show");
+        exportShowMenuButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportShowMenuButtonActionPerformed(evt);
+            }
+        });
+        editMenu.add(exportShowMenuButton);
+
+        menuBar.add(editMenu);
+
+        setJMenuBar(menuBar);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -132,10 +197,9 @@ public class Interface extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(newShowButton)
-                        .addGap(203, 203, 203)
+                        .addGap(265, 265, 265)
                         .addComponent(addNoteButton)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(deleteNoteButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(exportButton)
@@ -145,7 +209,7 @@ public class Interface extends javax.swing.JFrame {
                         .addGap(10, 10, 10))))
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addNoteButton, deleteNoteButton, exportButton, newShowButton});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addNoteButton, deleteNoteButton, exportButton});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -156,16 +220,14 @@ public class Interface extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(exportButton)
                     .addComponent(addNoteButton)
-                    .addComponent(newShowButton)
                     .addComponent(deleteNoteButton))
-                .addContainerGap(25, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void addNoteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addNoteButtonActionPerformed
-        //AddLineNote dialog = new AddLineNote(new javax.swing.JFrame(), true);
         for (Role role : show.getCharacterList()) {
             charactersComboBox.addElement(role.getName());
         }
@@ -184,23 +246,76 @@ public class Interface extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_addNoteButtonActionPerformed
 
-    private void newShowButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newShowButtonActionPerformed
-        iniFile = JOptionPane.showInputDialog(null, 
+    private void exportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportButtonActionPerformed
+        try {
+            exportData();
+        } catch (IOException ex) {
+            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_exportButtonActionPerformed
+
+    private void deleteNoteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteNoteButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_deleteNoteButtonActionPerformed
+
+    private void openShowMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openShowMenuButtonActionPerformed
+        /*showFileName = JOptionPane.showInputDialog(null, 
                 "Enter the name of the show.", 
                 "New Show", 
                 JOptionPane.INFORMATION_MESSAGE);
-        show = new Show(iniFile);
+        show = new Show(showFileName);
         for (Role role : show.getCharacterList()) {
             characters.addElement(role.getName());
         }
         
-        this.setTitle(getTitle() + " - " + iniFile);
-        deleteNoteButton.setEnabled(false);
-    }//GEN-LAST:event_newShowButtonActionPerformed
+        this.setTitle(getTitle() + " - " + showFileName);
+        deleteNoteButton.setEnabled(false);*/
+        openFileChooser.showOpenDialog(this);
+        File file = openFileChooser.getSelectedFile();
+        show = new Show(file);
+        for (Role role : show.getCharacterList()) {
+            characters.addElement(role.getName());
+        }
+    }//GEN-LAST:event_openShowMenuButtonActionPerformed
 
-    private void exportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportButtonActionPerformed
+    private void exitMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuButtonActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_exitMenuButtonActionPerformed
+
+    private void saveShowMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveShowMenuButtonActionPerformed
+        /*
+        Only exports the XML data for characters atm, will support .show saving
+        */
+        saveFileChooser.setCurrentDirectory(new File(show.getDirectory()));
+        int returnVal = saveFileChooser.showSaveDialog(this);
+        if (returnVal == saveFileChooser.APPROVE_OPTION) {
+            //saveFileChooser.getSelectedFile();
+            for (Role role : show.getCharacterList()) {
+            // Only make an output file if there are lines to be written.
+            if (!role.getNotes().isEmpty()) {
+                // Save the output for a later date
+                XMLWriter writer = new XMLWriter(role.getNotes());
+                try {
+                    writer.storeData(role.getName());
+                } catch (IOException ex) {
+                    Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+      }
+    }//GEN-LAST:event_saveShowMenuButtonActionPerformed
+
+    private void exportShowMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportShowMenuButtonActionPerformed
+        try {
+            exportData();
+        } catch (IOException ex) {
+            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_exportShowMenuButtonActionPerformed
+    
+    private void exportData() throws IOException {
         // Format the date from the infobox
-        String dateString = JOptionPane.showInputDialog(null, 
+        String dateString = JOptionPane.showInputDialog(this, 
                                 "Enter the date of the rehearsal (MM/DD/(YY)YY).", 
                                 "Enter Date", 
                                 JOptionPane.INFORMATION_MESSAGE);
@@ -212,11 +327,13 @@ public class Interface extends javax.swing.JFrame {
         Calendar calendar = new GregorianCalendar(dateArray[2], dateArray[0], dateArray[1]);
         
         for (Role role : show.getCharacterList()) {
+            // Only make an output file if there are lines to be written.
             if (!role.getNotes().isEmpty()) {
-                FormatOutputData data = new FormatOutputData();
+                FormatOutputData data;
                 try {
-                    data.format(show.getCharacterList(), calendar);
-                } catch (DocumentException | FileNotFoundException ex) {
+                    data = new FormatOutputData(role, calendar);
+                    data.format();
+                } catch (FileNotFoundException | DocumentException ex) {
                     ex.printStackTrace();
                 }
                 
@@ -225,11 +342,7 @@ public class Interface extends javax.swing.JFrame {
                 writer.storeData(role.getName());
             }
         }
-    }//GEN-LAST:event_exportButtonActionPerformed
-
-    private void deleteNoteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteNoteButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_deleteNoteButtonActionPerformed
+    }
     
     /**
      * @param args the command line arguments
@@ -280,20 +393,33 @@ public class Interface extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem addNewNoteMenuButton;
     private javax.swing.JButton addNoteButton;
     private javax.swing.JList characterList;
     private javax.swing.JButton deleteNoteButton;
+    private javax.swing.JMenu editMenu;
+    private javax.swing.JMenuItem editShowMenuButton;
+    private javax.swing.JMenuItem exitMenuButton;
     private javax.swing.JButton exportButton;
+    private javax.swing.JMenuItem exportShowMenuButton;
+    private javax.swing.JMenu fileMenu;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JOptionPane jOptionPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JSplitPane jSplitPane1;
-    private javax.swing.JButton newShowButton;
+    private javax.swing.JMenuBar menuBar;
+    private javax.swing.JMenuItem newShowMenuButton;
     private javax.swing.JPopupMenu noteRightClickMenu;
     private javax.swing.JList notesList;
+    private javax.swing.JFileChooser openFileChooser;
+    private javax.swing.JMenuItem openShowMenuButton;
+    private javax.swing.JFileChooser saveFileChooser;
+    private javax.swing.JMenuItem saveShowMenuButton;
     // End of variables declaration//GEN-END:variables
-    private String iniFile;
+    private String showFileName;
     private ListSelectionListener characterListListener = new ListSelectionListener() {
         @Override
             public void valueChanged(ListSelectionEvent arg0) {

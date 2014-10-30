@@ -16,22 +16,27 @@
  */
 package file;
 
+import com.thoughtworks.xstream.XStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import meta.LineNote;
+import meta.Role;
 /**
  *
  * @author Nathan
  */
 public class FileInput {
+    BufferedReader in;
     private final String dir = "C:/Users/Nathan/Documents/Programming/Projects/2014/lineNotes/src/data";
     
-    public ArrayList<String> getShowInformation(String fileName) throws IOException {
+    /*public ArrayList<String> getShowInformation(String fileName) throws IOException {
         ArrayList<String> lines = new ArrayList<>();
         try {
-            BufferedReader in = new BufferedReader(new FileReader(dir + "/" + fileName + ".ini"));
+            BufferedReader in = new BufferedReader(new FileReader(dir + "/" + fileName + ".show"));
             for (String line = in.readLine(); line != null; line = in.readLine()) {
                 lines.add(line);
             }
@@ -39,5 +44,25 @@ public class FileInput {
             System.out.println(e);
         }
         return lines;
+    }*/
+    public FileInput(File f) throws FileNotFoundException {
+        this.in = new BufferedReader(new FileReader(f));
+    }
+    
+    public ArrayList<String> getShowInformation() throws IOException {
+        ArrayList<String> lines = new ArrayList<>();
+        for (String line = in.readLine(); line != null; line = in.readLine()) {
+            lines.add(line);
+        }
+        return lines;
+    }
+    
+    public String getDirectory() {
+        return dir;
+    }
+    
+    public ArrayList<LineNote> getSavedLineNotes(Role role) throws IOException, ClassNotFoundException {
+        XMLReader read = new XMLReader(in);
+        return read.readData(role);
     }
 }

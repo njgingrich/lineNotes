@@ -19,9 +19,9 @@ package meta;
 import java.util.ArrayList;
 
 import file.FileInput;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -30,28 +30,33 @@ import java.util.logging.Logger;
 public class Show {
     private String title;
     private ArrayList<Role> characterList;
+    private String directory;
     
-    public Show(String iniFileName) {
-        FileInput in = new FileInput();
+    public Show(File file) throws ClassNotFoundException, FileNotFoundException {
+        FileInput in = new FileInput(file);
         characterList = new ArrayList<>();
         
         try {
-            ArrayList<String> iniData;
-            iniData = in.getShowInformation(iniFileName);
-            parseIniFile(iniData);
+            ArrayList<String> showData;
+            showData = in.getShowInformation();
+            parseShowFile(showData);
+            directory = in.getDirectory();
             
+            for (Role role : characterList) {
+                in.getSavedLineNotes(role);
+            }
             
         } catch (IOException ex) {
-            Logger.getLogger(Show.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
     }
     
-    private void parseIniFile(ArrayList<String> iniData) {
-        for (int i = 0; i < iniData.size(); i++) {
-            String line = iniData.get(i);
+    private String parseShowFile(ArrayList<String> showData) {
+        for (int i = 0; i < showData.size(); i++) {
+            String line = showData.get(i);
             // First lines until the second comment will be the show name
             if (line.equals("#Show Name")) {
-                title = iniData.get(i+1);
+                title = showData.get(i+1);
                 i += 2;
             } else if (line.startsWith("#")) {
                 // Line is a comment
@@ -66,9 +71,14 @@ public class Show {
                 characterList.add(role);
             }
         }
+        return title;
     }
     
     public ArrayList<Role> getCharacterList() {
         return characterList;
+    }
+    
+    public String getDirectory() {
+        return directory;
     }
 }

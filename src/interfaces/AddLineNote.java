@@ -27,7 +27,7 @@ import meta.LineNote;
 public class AddLineNote extends javax.swing.JDialog {
     private LineNote note;
     private String characterName;
-    private String error;
+    private String error = "";
     DefaultComboBoxModel characterList;
     /**
      * Creates new form AddLineNote
@@ -220,15 +220,15 @@ public class AddLineNote extends javax.swing.JDialog {
 
     private void addNoteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addNoteButtonActionPerformed
         if (lineNoteEditor == null || pageTextField == null || whichRadioButton() == null) {
-            notFilledOptionPane.showMessageDialog(null,
+            notFilledOptionPane.showMessageDialog(this,
             "You need to fill out all the fields.",
             "Error",
             notFilledOptionPane.ERROR_MESSAGE);
             
             return;
         }
-        if (!isValidatedString(lineNoteEditor.getText(), "^[a-zA-Z0-9\\.\\$\\?\":;',\\-\\(\\)]+$")) {
-            JOptionPane.showMessageDialog(null,
+        if (!isValidatedString(lineNoteEditor.getText(), "^[a-zA-Z0-9\\.\\$\\?\"!:;',\\-\\(\\) ]+$")) {
+            JOptionPane.showMessageDialog(this,
             "You need to enter a string for the line.",
             "Validation Error",
             notFilledOptionPane.ERROR_MESSAGE);
@@ -236,7 +236,7 @@ public class AddLineNote extends javax.swing.JDialog {
             return;
         }
         if (!isValidatedString(pageTextField.getText(), "^[0-9]+$")) {
-            JOptionPane.showMessageDialog(null,
+            JOptionPane.showMessageDialog(this,
             "You need to enter a number for the page.",
             "Validation Error",
             notFilledOptionPane.ERROR_MESSAGE);
@@ -250,68 +250,95 @@ public class AddLineNote extends javax.swing.JDialog {
         String pageNum = pageTextField.getText();
         String mistake = whichRadioButton().getText();
         note = new LineNote(line, error, pageNum, mistake);
+        if (mistake != "Called Line" && mistake != "Check Line") {
+            if (!line.contains(error)) {
+                if (mistake != "Wrong Order" && mistake != "Added") {
+                    JOptionPane.showMessageDialog(this, "String not found in the line.", "Validation Error", JOptionPane.ERROR_MESSAGE);
+                } else if (mistake == "Wrong Order") {
+                    String[] wrongWords = error.split("|");
+                    // Special case for order, have to split + fiddle with things
+                    if (!line.contains(wrongWords[0]) || !line.contains(wrongWords[1])) {
+                        JOptionPane.showMessageDialog(this, "String not found in the line.", "Validation Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                } else if (mistake == "Added") {
+                    String[] words = error.split(",")[1].split("|");
+                    if (!line.contains(words[0]) || !line.contains(words[1])) {
+                        JOptionPane.showMessageDialog(this, "String not found in the line.", "Validation Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
+            }
+        }
         
         clearText();
         super.dispose();
     }//GEN-LAST:event_addNoteButtonActionPerformed
 
     private void RBWrongWordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RBWrongWordActionPerformed
-        error = showDialog("Enter the error.");
+        error = showDialog("Enter the error.", 0);
     }//GEN-LAST:event_RBWrongWordActionPerformed
 
     private void RBWrongOrderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RBWrongOrderActionPerformed
         error = showDialog("Enter the error, putting the pipe\n"
-                    + "symbol \"|\" in between the phrases");
+                    + "symbol \"|\" in between the phrases", 1);
     }//GEN-LAST:event_RBWrongOrderActionPerformed
 
     private void RBDroppedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RBDroppedActionPerformed
-        error = showDialog("Enter the dropped word.");
+        error = showDialog("Enter the dropped word.", 2);
     }//GEN-LAST:event_RBDroppedActionPerformed
 
     private void RBAddedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RBAddedActionPerformed
-        error = showDialog("Enter the added word(s).");
+        error = showDialog("Enter the added word(s), a comma,\n"
+                           + "then the word before and after,\n"
+                           + "separated by the \"|\" symbol.", 3);
     }//GEN-LAST:event_RBAddedActionPerformed
 
     private void RBJumpedLineActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RBJumpedLineActionPerformed
-        error = showDialog("Enter the last line that was jumped over.");
+        error = showDialog("Enter the last line that was jumped over.", 4);
     }//GEN-LAST:event_RBJumpedLineActionPerformed
 
-    private String showDialog(String message) {
+    private String showDialog(String message, int button) {
         String response = "";
-        String regex = "^[a-zA-Z0-9\\.\\$\\?\":;',\\-\\(\\)]+$";
+        String regex = "^[a-zA-Z0-9\\.\\$\\?\"!:;',\\-\\(\\) ]+$";
         
         // Also allow the | character for wrong word
-        if (message == "Enter the error, putting the pipe\n"
-                    + "symbol \"|\" in between the phrases") {
-            regex = "^[a-zA-Z0-9\\.\\$\\?\":;',\\-\\(\\)\\|]+$";
+        if (button == 1 || button == 3) {
+            regex = "^[a-zA-Z0-9\\.\\$\\?\"!:;',\\-\\(\\)\\| ]+$";
         }
+        
         boolean isNotValidString = true;
         while (isNotValidString) {
-            response = lineNoteOptionPane.showInputDialog(null, 
+            response = lineNoteOptionPane.showInputDialog(this, 
                        message, 
                        "Enter Error",
                        lineNoteOptionPane.INFORMATION_MESSAGE);
             // Special cases for wrong order
-            if (message == "Enter the error, putting the pipe\n"
-                    + "symbol \"|\" in between the phrases" && !response.contains("|")) {
+            if (button == 1 && !response.contains("|")) {
                     
-                JOptionPane.showMessageDialog(null, "You need to use the '|' character.", "Validation Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "You need to use the '|' character.", "Validation Error", JOptionPane.ERROR_MESSAGE);
                 continue;
             }
-            if (message == "Enter the error, putting the pipe\n"
-                    + "symbol \"|\" in between the phrases" && 
+            if (button == 1 && 
                 response.indexOf("|") == 0 ||
                 response.indexOf("|") == response.length()-1) {
                     
-                JOptionPane.showMessageDialog(null, "You need data on both sides of" +
+                JOptionPane.showMessageDialog(this, "You need data on both sides of" +
                                                     " the '|' character.", "Validation Error", JOptionPane.ERROR_MESSAGE);
+                continue;
+            }
+            if (button == 1 && 
+                response.indexOf("|") != response.lastIndexOf("|")) {
+                    
+                JOptionPane.showMessageDialog(this, "You can only have one '|' character.", 
+                                                    "Validation Error", JOptionPane.ERROR_MESSAGE);
                 continue;
             }
             
             if (isValidatedString(response, regex)) {
                 isNotValidString = false;
             } else {
-                JOptionPane.showMessageDialog(null, "You need to enter a valid input.", "Validation Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "You need to enter a valid input.", "Validation Error", JOptionPane.ERROR_MESSAGE);
             }
         };
         

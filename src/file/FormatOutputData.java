@@ -28,10 +28,16 @@ import meta.Role;
  * @author Nathan
  */
 public class FormatOutputData {
-    private String[] errorOutput = new String[] {"Wrong Word", "Wrong Order", "Dropped", "Added", "Called Line", "Check Line", "Jumped Line"};
+    private int noteIX;
     private int errorIX;
+    private Role role;
+    private Calendar calendar;
+    private PDFWriter writer;
     
-    public FormatOutputData() {
+    public FormatOutputData(Role role, Calendar calendar) throws FileNotFoundException, DocumentException {
+        this.role = role;
+        this.calendar = calendar;
+        writer = new PDFWriter(role, calendar);
     }
     
     /*
@@ -44,35 +50,76 @@ public class FormatOutputData {
     To do this, we have to set some attributes in the JSON file so that the text
     will be bold.
     */
-    public void format(ArrayList<Role> characters, Calendar calendar) throws DocumentException, FileNotFoundException {
-        PDFWriter writer = new PDFWriter();
-        for (Role role : characters) {
-            for (LineNote note: role.getNotes()) {
-                switch(note.getNote()) {
-                    case("Wrong Word"):
-                        errorIX = 0;
-                        break;
-                    case("Wrong Order"):
-                        errorIX = 1;
-                        break;
-                    case("Dropped"):
-                        errorIX = 2;
-                        break;
-                    case("Added"):
-                        errorIX = 3;
-                        break;
-                    case("Called Line"):
-                        errorIX = 4;
-                        break;
-                    case("Check Line"):
-                        errorIX = 5;
-                        break;
-                    case("Jumped Line"):
-                        errorIX = 6;
-                        break;
-                }
-            writer.outputToPDF(role, errorOutput, errorIX, calendar);
+    public void format() throws DocumentException, FileNotFoundException {
+        writer.makePDFHeader();
+        
+        for (LineNote note: role.getNotes()) {
+            // Split the line into an array, length 4/5 for a word error, length 3 for anything else.
+            String[] splitLines = {"", "", "", "", ""};
+
+            switch(note.getNote()) {
+                case("Wrong Word"):
+                    noteIX = 0;
+                    errorIX = note.getLine().indexOf(note.getError());
+                    splitLines[0] = note.getLine().substring(0, errorIX);
+                    splitLines[1] = note.getLine().substring(errorIX, errorIX + note.getError().length()); // The error
+                    splitLines[2] = note.getLine().substring(errorIX + note.getError().length());
+
+                    break;
+                case("Wrong Order"):
+                    noteIX = 1;
+
+                    String[] splitError = note.getError().split("\\|");
+                    errorIX = note.getLine().indexOf(splitError[0]);
+                    int error2IX = note.getLine().indexOf(splitError[1]);
+
+                    splitLines[0] = note.getLine().substring(0, errorIX);
+                    splitLines[1] = "[" + note.getLine().substring(errorIX, errorIX + splitError[0].length()) + "]"; // Error #1
+                    splitLines[2] = note.getLine().substring(errorIX + splitError[0].length(), error2IX); // Will be "" if errors are adjacent
+                    splitLines[3] = "[" + note.getLine().substring(error2IX, error2IX + splitError[1].length()) + "]"; // Error #2
+                    splitLines[4] = note.getLine().substring(error2IX + splitError[1].length());
+                    break;
+                case("Dropped"):
+                    noteIX = 2;
+                    errorIX = note.getLine().indexOf(note.getError());
+                    splitLines[0] = note.getLine().substring(0, errorIX);
+                    splitLines[1] = note.getLine().substring(errorIX, errorIX + note.getError().length()); // The error
+                    splitLines[2] = note.getLine().substring(errorIX + note.getError().length());
+                    break;
+                case("Added"):
+                    noteIX = 3;
+                    /*
+                    Error format:
+                    "error, before|after"
+                    */
+                    String[] parts = note.getError().split(",");
+                    String error = " (" + parts[0] + ") ";
+                    String[] splitWords = parts[1].split("\\|");
+                    int wordEndIX = note.getLine().indexOf(splitWords[0]) + splitWords[0].length();
+                    int word2IX = note.getLine().indexOf(splitWords[1]);
+                    errorIX = note.getLine().indexOf(wordEndIX) + 1;
+                    
+                    splitLines[0] = note.getLine().substring(0, wordEndIX);
+                    splitLines[1] = error; // The error
+                    splitLines[2] = note.getLine().substring(word2IX);
+                    break;
+                case("Called Line"):
+                    noteIX = 4;
+                    splitLines[0] = note.getLine();
+                    break;
+                case("Check Line"):
+                    noteIX = 5;
+                    splitLines[0] = note.getLine();
+                    break;
+                case("Jumped Line"):
+                    noteIX = 6;
+                    splitLines[0] = "";
+                    splitLines[1] = "(" + note.getError() + ")"; // The error
+                    splitLines[2] = note.getLine();
+                    break;
             }
+            writer.outputToPDF(note.getPageNum(), noteIX, splitLines);
         }
+        writer.closePDF();
     }
 }

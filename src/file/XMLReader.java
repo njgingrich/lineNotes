@@ -17,37 +17,39 @@
 package file;
 
 import com.thoughtworks.xstream.XStream;
-import java.io.FileWriter;
+import java.io.BufferedReader;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import meta.LineNote;
+import meta.Role;
 
 /**
  *
  * @author Nathan
  */
-public class XMLWriter {
+public class XMLReader {
     private String directory = "C:/Users/Nathan/Documents/Programming/Projects/2014/lineNotes/src/data/notes/saved/";
-    private ArrayList<LineNote> notes;
+    private BufferedReader reader;
     
-    public XMLWriter(ArrayList<LineNote> notes) {
-        this.notes = notes;
+    public XMLReader(BufferedReader reader) {
+        this.reader = reader;
     }
     
-    public void storeData(String characterName) throws IOException {
-        String newDirectory = directory + characterName.replaceAll(" ", "") + ".xml";
-        
+    public ArrayList<LineNote> readData(Role role) throws IOException, ClassNotFoundException {
+       ArrayList<LineNote> notes = new ArrayList<>();
         XStream xstream = new XStream();
-        xstream.alias("LineNote", LineNote.class);
-        ObjectOutputStream out = xstream.createObjectOutputStream(new FileWriter(newDirectory));
-        //String xml = "";
-        for (LineNote note : notes) {
-            //xml += xstream.toXML(note) + "\n";
-            out.writeObject(note);
+        ObjectInputStream in = xstream.createObjectInputStream(reader);
+        File f = new File(directory + role.getName().replaceAll(" ", "") + ".xml");
+        
+        try {
+            notes.add((LineNote)in.readObject());
+        } catch (EOFException ex) {
+            return notes;
         }
-        out.close();
-        //FileOutput f = new FileOutput();
-        //f.writeFile(newDirectory, xml);
-    }
+        return notes;
+    } 
 }
