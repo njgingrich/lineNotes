@@ -17,9 +17,11 @@
 package file;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.mapper.CannotResolveClassException;
 import java.io.BufferedReader;
 import java.io.EOFException;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -39,17 +41,14 @@ public class XMLReader {
         this.reader = reader;
     }
     
-    public ArrayList<LineNote> readData(Role role) throws IOException, ClassNotFoundException {
-       ArrayList<LineNote> notes = new ArrayList<>();
+    public ArrayList<LineNote> readData(Role role) throws IOException, ClassNotFoundException, FileNotFoundException {
+        ArrayList<LineNote> notes = new ArrayList<>();
         XStream xstream = new XStream();
+        xstream.alias("LineNote", LineNote.class);
         ObjectInputStream in = xstream.createObjectInputStream(reader);
-        File f = new File(directory + role.getName().replaceAll(" ", "") + ".xml");
         
-        try {
-            notes.add((LineNote)in.readObject());
-        } catch (EOFException ex) {
-            return notes;
-        }
+        LineNote noteToAdd = (LineNote)in.readObject();
+        notes.add(noteToAdd);
         return notes;
     } 
 }

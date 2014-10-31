@@ -31,6 +31,7 @@ import meta.Role;
  */
 public class FileInput {
     BufferedReader in;
+    Role role;
     private final String dir = "C:/Users/Nathan/Documents/Programming/Projects/2014/lineNotes/src/data";
     
     /*public ArrayList<String> getShowInformation(String fileName) throws IOException {
@@ -48,6 +49,16 @@ public class FileInput {
     public FileInput(File f) throws FileNotFoundException {
         this.in = new BufferedReader(new FileReader(f));
     }
+    public FileInput(String directory, Role role) throws FileNotFoundException {
+        this.role = role;
+        String filePath = (directory + role.getName().replaceAll(" ", "") + ".xml");
+        System.out.println(filePath);
+        //try {
+            this.in = new BufferedReader(new FileReader(new File(filePath)));
+        //} catch (FileNotFoundException ex) {
+        //    System.out.println("No entries for " + role.getName());
+        //}
+    }
     
     public ArrayList<String> getShowInformation() throws IOException {
         ArrayList<String> lines = new ArrayList<>();
@@ -61,7 +72,7 @@ public class FileInput {
         return dir;
     }
     
-    public ArrayList<LineNote> getSavedLineNotes(Role role) throws IOException, ClassNotFoundException {
+    public ArrayList<LineNote> getSavedLineNotes() throws IOException, ClassNotFoundException, FileNotFoundException {
         XMLReader read = new XMLReader(in);
         return read.readData(role);
     }

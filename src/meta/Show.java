@@ -43,7 +43,19 @@ public class Show {
             directory = in.getDirectory();
             
             for (Role role : characterList) {
-                in.getSavedLineNotes(role);
+                /*
+                Need to handle FileNotFound exceptions here
+                */
+                try {
+                    FileInput savedData = new FileInput(directory + "/notes/saved/", role);
+                    ArrayList<LineNote> notesToAdd = savedData.getSavedLineNotes();
+                    for(LineNote note: notesToAdd) {
+                        role.addNote(note);
+                    }
+                } catch (FileNotFoundException ex) {
+                    System.out.println("No entries for " + role.getName());
+                    //ex.printStackTrace();
+                }
             }
             
         } catch (IOException ex) {

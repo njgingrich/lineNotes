@@ -270,9 +270,16 @@ public class Interface extends javax.swing.JFrame {
         
         this.setTitle(getTitle() + " - " + showFileName);
         deleteNoteButton.setEnabled(false);*/
+        openFileChooser.setCurrentDirectory(new File("src/data"));
         openFileChooser.showOpenDialog(this);
         File file = openFileChooser.getSelectedFile();
-        show = new Show(file);
+        try {
+            show = new Show(file);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+        }
         for (Role role : show.getCharacterList()) {
             characters.addElement(role.getName());
         }
