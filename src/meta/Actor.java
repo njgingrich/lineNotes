@@ -27,30 +27,49 @@ public class Actor {
     private final String firstName;
     private final String lastName;
     
+    /**
+     * Create a new Actor
+     * @param firstName the first name
+     * @param lastName the last name
+     */
     public Actor(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
         email = firstName + "." + lastName + "@hope.edu";
     }
     
+    /**
+     * Create a new actor
+     * @param firstName the first name
+     * @param lastName the last name
+     * @param email the email address
+     */
     public Actor(String firstName, String lastName, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
     }
-    
+    /**
+     * @return the email
+     */
     public String getEmail() {
         return email;
     }
-    
+    /**
+     * @return the first name of the actor
+     */
     public String getFirstName() {
         return firstName;
     }
-    
+    /**
+     * @return the last name of the actor
+     */
     public String getLastName() {
         return lastName;
     }
-    
+    /**
+     * @return the full name of the actor
+     */
     public String getName() {
         return firstName + " " + lastName;
     }

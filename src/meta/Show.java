@@ -32,6 +32,12 @@ public class Show {
     private ArrayList<Role> characterList;
     private String directory;
     
+    /**
+     * Create a new show
+     * @param file the location of the show file
+     * @throws ClassNotFoundException
+     * @throws FileNotFoundException
+     */
     public Show(File file) throws ClassNotFoundException, FileNotFoundException {
         FileInput in = new FileInput(file);
         characterList = new ArrayList<>();
@@ -47,7 +53,7 @@ public class Show {
                 Need to handle FileNotFound exceptions here
                 */
                 try {
-                    FileInput savedData = new FileInput(directory + "/notes/saved/", role);
+                    FileInput savedData = new FileInput(getDirectory() + "/notes/saved/", role);
                     ArrayList<LineNote> notesToAdd = savedData.getSavedLineNotes();
                     for(LineNote note: notesToAdd) {
                         role.addNote(note);
@@ -83,13 +89,25 @@ public class Show {
                 characterList.add(role);
             }
         }
-        return title;
+        return getTitle();
     }
-    
+    /**
+     * @return the characterList
+     */
     public ArrayList<Role> getCharacterList() {
         return characterList;
     }
-    
+
+    /**
+     * @return the title
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * @return the directory
+     */
     public String getDirectory() {
         return directory;
     }

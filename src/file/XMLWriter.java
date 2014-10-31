@@ -28,26 +28,42 @@ import meta.LineNote;
  * @author Nathan
  */
 public class XMLWriter {
-    private String directory = "C:/Users/Nathan/Documents/Programming/Projects/2014/lineNotes/src/data/notes/saved/";
-    private ArrayList<LineNote> notes;
+    private final String directory;
+    private final ArrayList<LineNote> notes;
     
+    /**
+     * Create a new XMLWriter to write the notes
+     * @param notes the notes to write
+     */
     public XMLWriter(ArrayList<LineNote> notes) {
+        this.directory = "C:/Users/Nathan/Documents/Programming/Projects/2014/lineNotes/src/data/notes/saved/";
         this.notes = notes;
     }
     
+    /**
+     * Create a new XMLWriter to write the notes to the given directory
+     * @param notes the notes to write
+     * @param directory the given directory to write to
+     */
+    public XMLWriter(ArrayList<LineNote> notes, String directory) {
+        this.directory = directory;
+        this.notes = notes;
+    }
+    
+    /**
+     * Store the data in an XML file
+     * @param characterName the name of the role to be saved
+     * @throws IOException
+     */
     public void storeData(String characterName) throws IOException {
         String newDirectory = directory + characterName.replaceAll(" ", "") + ".xml";
         
         XStream xstream = new XStream();
         xstream.alias("LineNote", LineNote.class);
         ObjectOutputStream out = xstream.createObjectOutputStream(new FileWriter(newDirectory));
-        //String xml = "";
         for (LineNote note : notes) {
-            //xml += xstream.toXML(note) + "\n";
             out.writeObject(note);
         }
         out.close();
-        //FileOutput f = new FileOutput();
-        //f.writeFile(newDirectory, xml);
     }
 }

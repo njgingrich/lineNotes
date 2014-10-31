@@ -34,6 +34,13 @@ public class FormatOutputData {
     private final DateTime date;
     private final PDFWriter writer;
     
+    /**
+     * Format the data to be outputted to PDF
+     * @param role the role
+     * @param date the rehearsal date
+     * @throws FileNotFoundException
+     * @throws DocumentException
+     */
     public FormatOutputData(Role role, DateTime date) throws FileNotFoundException, DocumentException {
         this.role = role;
         this.date = date;
@@ -50,6 +57,13 @@ public class FormatOutputData {
     To do this, we have to set some attributes in the JSON file so that the text
     will be bold.
     */
+
+    /**
+     * Find the section of the line that should be bolded, given an error
+     * @throws DocumentException
+     * @throws FileNotFoundException
+     */
+    
     public void format() throws DocumentException, FileNotFoundException {
         writer.makePDFHeader();
         

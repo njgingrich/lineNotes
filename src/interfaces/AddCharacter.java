@@ -28,6 +28,7 @@ public class AddCharacter extends javax.swing.JDialog {
     String firstName;
     String lastName;
     Role role;
+    
     /**
      * Creates new form AddCharacter
      * @param parent
@@ -236,14 +237,23 @@ public class AddCharacter extends javax.swing.JDialog {
         roleTextField.setText("");
     }
     
+    /**
+     * @return the first name of the actor playing the character
+     */
     public String getFirstName() {
         return firstName;
     }
     
+    /**
+     * @return the last name of the actor playing the character
+     */
     public String getLastName() {
         return lastName;
     }
     
+    /**
+     * @return the role the actor is playing
+     */
     public Role getRole() {
         return role;
     }

@@ -17,12 +17,8 @@
 package file;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.mapper.CannotResolveClassException;
 import java.io.BufferedReader;
-import java.io.EOFException;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
@@ -34,13 +30,25 @@ import meta.Role;
  * @author Nathan
  */
 public class XMLReader {
-    private String directory = "C:/Users/Nathan/Documents/Programming/Projects/2014/lineNotes/src/data/notes/saved/";
-    private BufferedReader reader;
+    private final String directory = "C:/Users/Nathan/Documents/Programming/Projects/2014/lineNotes/src/data/notes/saved/";
+    private final BufferedReader reader;
     
+    /**
+     * Create a new XMLReader
+     * @param reader
+     */
     public XMLReader(BufferedReader reader) {
         this.reader = reader;
     }
     
+    /**
+     * Read the data saved in an XML file
+     * @param role the role to read data for
+     * @return the arrayList of notes found for the given role
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws FileNotFoundException
+     */
     public ArrayList<LineNote> readData(Role role) throws IOException, ClassNotFoundException, FileNotFoundException {
         ArrayList<LineNote> notes = new ArrayList<>();
         XStream xstream = new XStream();

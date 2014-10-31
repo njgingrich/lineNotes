@@ -50,6 +50,13 @@ public class PDFWriter {
     Font lineFontBold;
     Font errorFontBold;
 
+    /**
+     * Create a PDF Writer to write line notes to disk
+     * @param role the role
+     * @param date the rehearsal date
+     * @throws FileNotFoundException
+     * @throws DocumentException
+     */
     public PDFWriter(Role role, DateTime date) throws FileNotFoundException, DocumentException {
         this.role = role;
         this.date = date;
@@ -87,6 +94,14 @@ public class PDFWriter {
         errorFontBold.setStyle(Font.BOLDITALIC);
     }
     
+    /**
+     * Output the data to a PDF
+     * @param page the page number of the line error
+     * @param errorIX the index of the error
+     * @param splitLines the array of lines with the error bolded
+     * @throws DocumentException
+     * @throws FileNotFoundException
+     */
     public void outputToPDF(String page, int errorIX, String[] splitLines) 
             throws DocumentException, FileNotFoundException {
 
@@ -148,6 +163,10 @@ public class PDFWriter {
         document.add(Chunk.NEWLINE);
     }
     
+    /**
+     * Make the initial header to the PDF, with the date and character
+     * @throws DocumentException
+     */
     public void makePDFHeader() throws DocumentException {
         PdfPTable headerTable = new PdfPTable(2);
         headerTable.setWidthPercentage(100);
@@ -168,6 +187,9 @@ public class PDFWriter {
         document.add(Chunk.NEWLINE);
     }
     
+    /**
+     * Close the PDF
+     */
     public void closePDF() {
         document.close();
     }

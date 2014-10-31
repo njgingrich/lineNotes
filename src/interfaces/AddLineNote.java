@@ -30,14 +30,13 @@ public class AddLineNote extends javax.swing.JDialog {
     private String characterName;
     private String error = "";
     DefaultComboBoxModel characterList;
-    /**
-     * Creates new form AddLineNote
-     */
-    public AddLineNote(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
-        initComponents();
-    }
     
+    /**
+     * Creates a new form AddLineNote
+     * @param parent
+     * @param modal
+     * @param characterList the character list of the show
+     */
     public AddLineNote(java.awt.Frame parent, boolean modal, DefaultComboBoxModel characterList) {
         super(parent, modal);
         this.characterList = characterList;
@@ -350,10 +349,16 @@ public class AddLineNote extends javax.swing.JDialog {
         return response;
     }
     
+    /**
+     * @return the line note
+     */
     public LineNote getLineNote() {
         return note;
     }
     
+    /**
+     * @return the character name
+     */
     public String getCharacterName() {
         return characterName;
     }

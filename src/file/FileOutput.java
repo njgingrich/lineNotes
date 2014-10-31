@@ -22,16 +22,24 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- *
+ * For outputting data to be saved
  * @author Nathan
  */
 public class FileOutput {
     private String baseDirectory = "C:/Users/Nathan/Documents/Programming/Projects/2014/lineNotes/src/data/notes";
     
+    /**
+     * 
+     */
     public FileOutput() {
         
     }
     
+    /**
+     * Save the data to disk
+     * @param fileName
+     * @param data
+     */
     public void writeFile(String fileName, String data) {
         try {
             File file = new File(fileName);

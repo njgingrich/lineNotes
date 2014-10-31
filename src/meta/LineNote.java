@@ -26,6 +26,13 @@ public class LineNote {
     private final String note;
     private final String page;
         
+    /**
+     * Create a new LineNote
+     * @param line the line containing the error
+     * @param error the specific error the actor made
+     * @param pageNum the number of the page the line is on
+     * @param note the type of error
+     */
     public LineNote(String line, String error, String pageNum, String note) {
         this.line = line;
         this.error = error;
@@ -33,18 +40,30 @@ public class LineNote {
         this.note = note;
     }
     
+    /**
+     * @return the line
+     */
     public String getLine() {
         return line;
     }
     
+    /**
+     * @return the page number
+     */
     public String getPageNum() {
         return page;
     }
     
+    /**
+     * @return the type of error
+     */
     public String getNote() {
         return note;
     }
     
+    /**
+     * @return the error
+     */
     public String getError() {
         return error;
     }

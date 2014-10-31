@@ -19,7 +19,7 @@ package file;
 import java.io.File;
 
 /**
- *
+ * File Filter for only allowing .show files
  * @author Nathan
  */
 public class ShowFileFilter extends javax.swing.filechooser.FileFilter {

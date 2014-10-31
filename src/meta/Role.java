@@ -24,27 +24,45 @@ import java.util.ArrayList;
  */
 public class Role {
     private final String name;
-    private Actor actor;
-    private ArrayList<LineNote> notes;
+    private final Actor actor;
+    private final ArrayList<LineNote> notes;
     
+    /**
+     * Create a new role
+     * @param actor the actor
+     * @param role the role
+     */
     public Role(Actor actor, String role) {
         this.name = role;
         this.actor = actor;
         notes = new ArrayList<>();
     }
     
+    /**
+     * @return the name of the role
+     */
     public String getName() {
         return name;
     }
     
+    /**
+     * @return the name of the actor
+     */
     public Actor getActor() {
         return actor;
     }
     
+    /**
+     * @return the notes for the actor
+     */
     public ArrayList<LineNote> getNotes() {
         return notes;
     }
     
+    /**
+     * Add a new note to the role
+     * @param note the note to add
+     */
     public void addNote(LineNote note) {
         notes.add(note);
     }

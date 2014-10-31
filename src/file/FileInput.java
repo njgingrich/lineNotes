@@ -33,22 +33,22 @@ public class FileInput {
     BufferedReader in;
     Role role;
     private final String dir = "C:/Users/Nathan/Documents/Programming/Projects/2014/lineNotes/src/data";
-    
-    /*public ArrayList<String> getShowInformation(String fileName) throws IOException {
-        ArrayList<String> lines = new ArrayList<>();
-        try {
-            BufferedReader in = new BufferedReader(new FileReader(dir + "/" + fileName + ".show"));
-            for (String line = in.readLine(); line != null; line = in.readLine()) {
-                lines.add(line);
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println(e);
-        }
-        return lines;
-    }*/
+
+    /**
+     * Create a new FileInput with the given file
+     * @param f
+     * @throws FileNotFoundException
+     */
     public FileInput(File f) throws FileNotFoundException {
         this.in = new BufferedReader(new FileReader(f));
     }
+
+    /**
+     * Create a new FileInput with a directory + role
+     * @param directory
+     * @param role
+     * @throws FileNotFoundException
+     */
     public FileInput(String directory, Role role) throws FileNotFoundException {
         this.role = role;
         String filePath = (directory + role.getName().replaceAll(" ", "") + ".xml");
@@ -60,6 +60,11 @@ public class FileInput {
         //}
     }
     
+    /**
+     * Get information from the show file
+     * @return An arrayList of strings from the .show file
+     * @throws IOException
+     */
     public ArrayList<String> getShowInformation() throws IOException {
         ArrayList<String> lines = new ArrayList<>();
         for (String line = in.readLine(); line != null; line = in.readLine()) {
@@ -68,10 +73,20 @@ public class FileInput {
         return lines;
     }
     
+    /**
+     * @return the directory
+     */
     public String getDirectory() {
         return dir;
     }
     
+    /**
+     * Get line notes previously saved
+     * @return an arrayList of the saved LineNotes
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws FileNotFoundException
+     */
     public ArrayList<LineNote> getSavedLineNotes() throws IOException, ClassNotFoundException, FileNotFoundException {
         XMLReader read = new XMLReader(in);
         return read.readData(role);
