@@ -32,6 +32,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.Calendar;
 import meta.Role;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -42,25 +43,30 @@ public class PDFWriter {
     private final String[] errorOutput = new String[] {"Wrong Word", "Wrong Order", "Dropped", "Added", "Called Line", "Check Line", "Jumped Line"};
     Document document;
     Role role;
-    Calendar calendar;
+    DateTime date;
     Font lineFont;
     Font lineFontUnderline;
     Font errorFont;
     Font lineFontBold;
     Font errorFontBold;
 
-    public PDFWriter(Role role, Calendar calendar) throws FileNotFoundException, DocumentException {
+    public PDFWriter(Role role, DateTime date) throws FileNotFoundException, DocumentException {
         this.role = role;
-        this.calendar = calendar;
+        this.date = date;
         setFontStyles();
         
+        System.out.println(directory + 
+                             "UT_LineNotes" + 
+                             role.getName().replaceAll(" ", "") + 
+                             date.monthOfYear().getAsString() + "." +
+                             date.dayOfMonth().getAsString() + "." +
+                             date.year().get() + ".pdf");
         File file = new File(directory + 
                              "UT_LineNotes" + 
                              role.getName().replaceAll(" ", "") + 
-                             calendar.get(Calendar.MONTH) + "." +
-                             calendar.get(Calendar.DAY_OF_MONTH) + "." +
-                             calendar.get(Calendar.YEAR) +
-                             ".pdf");
+                             date.monthOfYear().getAsString() + "." +
+                             date.dayOfMonth().getAsString() + "." +
+                             date.year().get() + ".pdf");
         FileOutputStream fileout = new FileOutputStream(file);
         document = new Document();
         PdfWriter.getInstance(document, fileout);
@@ -146,8 +152,8 @@ public class PDFWriter {
         PdfPTable headerTable = new PdfPTable(2);
         headerTable.setWidthPercentage(100);
         PdfPCell dateCell = new PdfPCell(new Paragraph("Date: " +
-                                                       calendar.get(Calendar.MONTH) + "/" +
-                                                       calendar.get(Calendar.DAY_OF_MONTH), lineFont));
+                                                       date.dayOfMonth().getAsString() + "/" +
+                                                       date.year().get(), lineFont));
         dateCell.setHorizontalAlignment(Element.ALIGN_LEFT);
         dateCell.setBorder(PdfPCell.NO_BORDER);
         dateCell.setPadding(0.3f);

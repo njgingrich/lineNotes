@@ -21,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.util.Calendar;
 import meta.LineNote;
 import meta.Role;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -30,13 +31,13 @@ public class FormatOutputData {
     private int noteIX;
     private int errorIX;
     private final Role role;
-    private final Calendar calendar;
+    private final DateTime date;
     private final PDFWriter writer;
     
-    public FormatOutputData(Role role, Calendar calendar) throws FileNotFoundException, DocumentException {
+    public FormatOutputData(Role role, DateTime date) throws FileNotFoundException, DocumentException {
         this.role = role;
-        this.calendar = calendar;
-        writer = new PDFWriter(role, calendar);
+        this.date = date;
+        writer = new PDFWriter(role, date);
     }
     
     /*

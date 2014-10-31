@@ -36,6 +36,7 @@ import javax.swing.DefaultComboBoxModel;
 import meta.Role;
 import meta.Show;
 import meta.LineNote;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -346,14 +347,14 @@ public class Interface extends javax.swing.JFrame {
     }//GEN-LAST:event_deleteCharacterMenuButtonActionPerformed
     
     private void exportData() throws IOException {
-        Calendar calendar = getDateInput();
+        DateTime dt = getDateInput();
         
         for (Role role : show.getCharacterList()) {
             // Only make an output file if there are lines to be written.
             if (!role.getNotes().isEmpty()) {
                 FormatOutputData data;
                 try {
-                    data = new FormatOutputData(role, calendar);
+                    data = new FormatOutputData(role, dt);
                     data.format();
                 } catch (FileNotFoundException | DocumentException ex) {
                     ex.printStackTrace();
@@ -366,8 +367,8 @@ public class Interface extends javax.swing.JFrame {
         }
     }
 
-    private Calendar getDateInput() throws NumberFormatException, HeadlessException {
-        // Format the date from the infobox
+    private DateTime getDateInput() throws NumberFormatException, HeadlessException {
+        /*// Format the date from the infobox
         String dateString = JOptionPane.showInputDialog(this,
                 "Enter the date of the rehearsal (MM/DD/(YY)YY).",
                 "Enter Date",
@@ -378,7 +379,18 @@ public class Interface extends javax.swing.JFrame {
             dateArray[i] = Integer.parseInt(splitDate[i]);
         }
         Calendar calendar = new GregorianCalendar(dateArray[2], dateArray[0], dateArray[1]);
-        return calendar;
+        return calendar;*/
+        String dateString = JOptionPane.showInputDialog(this,
+                "Enter the date of the rehearsal (MM/DD/(YY)YY).",
+                "Enter Date",
+                JOptionPane.INFORMATION_MESSAGE);
+        int[] dateArray = {0,0,0};
+        String[] splitDate = dateString.split("/");
+        for (int i = 0; i < splitDate.length; i++) {
+            dateArray[i] = Integer.parseInt(splitDate[i]);
+        }
+        DateTime dt = new DateTime(dateArray[2], dateArray[0], dateArray[1], 0, 0);
+        return dt;
     }
     
     /**
