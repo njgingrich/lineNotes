@@ -4,10 +4,6 @@
   <NonVisualComponents>
     <Component class="javax.swing.ButtonGroup" name="buttonGroup1">
     </Component>
-    <Component class="javax.swing.JOptionPane" name="notFilledOptionPane">
-    </Component>
-    <Component class="javax.swing.JOptionPane" name="lineNoteOptionPane">
-    </Component>
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>

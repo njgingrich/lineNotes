@@ -18,7 +18,6 @@ package file;
 
 import com.itextpdf.text.DocumentException;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import meta.LineNote;
 import meta.Role;
@@ -30,9 +29,9 @@ import meta.Role;
 public class FormatOutputData {
     private int noteIX;
     private int errorIX;
-    private Role role;
-    private Calendar calendar;
-    private PDFWriter writer;
+    private final Role role;
+    private final Calendar calendar;
+    private final PDFWriter writer;
     
     public FormatOutputData(Role role, Calendar calendar) throws FileNotFoundException, DocumentException {
         this.role = role;
@@ -64,8 +63,8 @@ public class FormatOutputData {
                     splitLines[0] = note.getLine().substring(0, errorIX);
                     splitLines[1] = note.getLine().substring(errorIX, errorIX + note.getError().length()); // The error
                     splitLines[2] = note.getLine().substring(errorIX + note.getError().length());
-
                     break;
+                    
                 case("Wrong Order"):
                     noteIX = 1;
 
@@ -79,6 +78,7 @@ public class FormatOutputData {
                     splitLines[3] = "[" + note.getLine().substring(error2IX, error2IX + splitError[1].length()) + "]"; // Error #2
                     splitLines[4] = note.getLine().substring(error2IX + splitError[1].length());
                     break;
+                    
                 case("Dropped"):
                     noteIX = 2;
                     errorIX = note.getLine().indexOf(note.getError());
@@ -86,6 +86,7 @@ public class FormatOutputData {
                     splitLines[1] = note.getLine().substring(errorIX, errorIX + note.getError().length()); // The error
                     splitLines[2] = note.getLine().substring(errorIX + note.getError().length());
                     break;
+                    
                 case("Added"):
                     noteIX = 3;
                     /*
@@ -103,14 +104,17 @@ public class FormatOutputData {
                     splitLines[1] = error; // The error
                     splitLines[2] = note.getLine().substring(word2IX);
                     break;
+                    
                 case("Called Line"):
                     noteIX = 4;
                     splitLines[0] = note.getLine();
                     break;
+                    
                 case("Check Line"):
                     noteIX = 5;
                     splitLines[0] = note.getLine();
                     break;
+                    
                 case("Jumped Line"):
                     noteIX = 6;
                     splitLines[0] = "";

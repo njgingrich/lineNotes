@@ -20,6 +20,7 @@ import com.itextpdf.text.DocumentException;
 import file.FormatOutputData;
 import file.ShowFileFilter;
 import file.XMLWriter;
+import java.awt.HeadlessException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -345,17 +346,7 @@ public class Interface extends javax.swing.JFrame {
     }//GEN-LAST:event_deleteCharacterMenuButtonActionPerformed
     
     private void exportData() throws IOException {
-        // Format the date from the infobox
-        String dateString = JOptionPane.showInputDialog(this, 
-                                "Enter the date of the rehearsal (MM/DD/(YY)YY).", 
-                                "Enter Date", 
-                                JOptionPane.INFORMATION_MESSAGE);
-        int[] dateArray = {0,0,0};
-        String[] splitDate = dateString.split("/");
-        for (int i = 0; i < splitDate.length; i++) {
-           dateArray[i] = Integer.parseInt(splitDate[i]);
-        }
-        Calendar calendar = new GregorianCalendar(dateArray[2], dateArray[0], dateArray[1]);
+        Calendar calendar = getDateInput();
         
         for (Role role : show.getCharacterList()) {
             // Only make an output file if there are lines to be written.
@@ -373,6 +364,21 @@ public class Interface extends javax.swing.JFrame {
                 writer.storeData(role.getName());
             }
         }
+    }
+
+    private Calendar getDateInput() throws NumberFormatException, HeadlessException {
+        // Format the date from the infobox
+        String dateString = JOptionPane.showInputDialog(this,
+                "Enter the date of the rehearsal (MM/DD/(YY)YY).",
+                "Enter Date",
+                JOptionPane.INFORMATION_MESSAGE);
+        int[] dateArray = {0,0,0};
+        String[] splitDate = dateString.split("/");
+        for (int i = 0; i < splitDate.length; i++) {
+            dateArray[i] = Integer.parseInt(splitDate[i]);
+        }
+        Calendar calendar = new GregorianCalendar(dateArray[2], dateArray[0], dateArray[1]);
+        return calendar;
     }
     
     /**

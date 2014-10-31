@@ -54,8 +54,6 @@ public class AddLineNote extends javax.swing.JDialog {
     private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
-        notFilledOptionPane = new javax.swing.JOptionPane();
-        lineNoteOptionPane = new javax.swing.JOptionPane();
         characterLabel = new javax.swing.JLabel();
         pageLabel = new javax.swing.JLabel();
         pageTextField = new javax.swing.JTextField();
@@ -221,10 +219,10 @@ public class AddLineNote extends javax.swing.JDialog {
 
     private void addNoteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addNoteButtonActionPerformed
         if (lineNoteEditor == null || pageTextField == null || whichRadioButton() == null) {
-            notFilledOptionPane.showMessageDialog(this,
+            JOptionPane.showMessageDialog(this,
             "You need to fill out all the fields.",
             "Error",
-            notFilledOptionPane.ERROR_MESSAGE);
+            JOptionPane.ERROR_MESSAGE);
             
             return;
         }
@@ -232,7 +230,7 @@ public class AddLineNote extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this,
             "You need to enter a string for the line.",
             "Validation Error",
-            notFilledOptionPane.ERROR_MESSAGE);
+            JOptionPane.ERROR_MESSAGE);
             
             return;
         }
@@ -240,7 +238,7 @@ public class AddLineNote extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this,
             "You need to enter a number for the page.",
             "Validation Error",
-            notFilledOptionPane.ERROR_MESSAGE);
+            JOptionPane.ERROR_MESSAGE);
             
             return;
         }
@@ -261,17 +259,17 @@ public class AddLineNote extends javax.swing.JDialog {
     }//GEN-LAST:event_addNoteButtonActionPerformed
 
     private boolean errorIsInLine(String mistake, String line) throws HeadlessException {
-        if (mistake != "Called Line" && mistake != "Check Line") {
+        if (!mistake.equals("Called Line") && !mistake.equals("Check Line")) {
             if (!line.contains(error)) {
-                if (mistake != "Wrong Order" && mistake != "Added") {
+                if (!"Wrong Order".equals(mistake) && !"Added".equals(mistake)) {
                     return true;
-                } else if (mistake == "Wrong Order") {
+                } else if (mistake.equals("Wrong Order")) {
                     String[] wrongWords = error.split("|");
                     // Special case for order, have to split + fiddle with things
                     if (!line.contains(wrongWords[0]) || !line.contains(wrongWords[1])) {
                         return true;
                     }
-                } else if (mistake == "Added") {
+                } else if (mistake.equals("Added")) {
                     String[] words = error.split(",")[1].split("|");
                     if (!line.contains(words[0]) || !line.contains(words[1])) {
                         return true;
@@ -316,10 +314,10 @@ public class AddLineNote extends javax.swing.JDialog {
         
         boolean isNotValidString = true;
         while (isNotValidString) {
-            response = lineNoteOptionPane.showInputDialog(this, 
+            response = JOptionPane.showInputDialog(this, 
                        message, 
                        "Enter Error",
-                       lineNoteOptionPane.INFORMATION_MESSAGE);
+                       JOptionPane.INFORMATION_MESSAGE);
             // Special cases for wrong order
             if (button == 1 && !response.contains("|")) {
                     
@@ -347,7 +345,7 @@ public class AddLineNote extends javax.swing.JDialog {
             } else {
                 JOptionPane.showMessageDialog(this, "You need to enter a valid input.", "Validation Error", JOptionPane.ERROR_MESSAGE);
             }
-        };
+        }
         
         return response;
     }
@@ -386,10 +384,7 @@ public class AddLineNote extends javax.swing.JDialog {
     }
     
     private boolean isValidatedString(String str, String regex) {
-        if (str.matches(regex)) { 
-            return true;
-        }
-        return false;
+        return str.matches(regex);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -407,8 +402,6 @@ public class AddLineNote extends javax.swing.JDialog {
     private javax.swing.JButton clearButton;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JEditorPane lineNoteEditor;
-    private javax.swing.JOptionPane lineNoteOptionPane;
-    private javax.swing.JOptionPane notFilledOptionPane;
     private javax.swing.JLabel pageLabel;
     private javax.swing.JTextField pageTextField;
     // End of variables declaration//GEN-END:variables
