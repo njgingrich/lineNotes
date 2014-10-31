@@ -267,12 +267,19 @@ public class Interface extends javax.swing.JFrame {
     }//GEN-LAST:event_addNoteButtonActionPerformed
 
     private void exportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportButtonActionPerformed
-        try {
-            exportData();
-        } catch (IOException ex) {
-            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        exportAction();
     }//GEN-LAST:event_exportButtonActionPerformed
+
+    private void exportAction() throws HeadlessException {
+        int errors = 0;
+        try {
+            errors = exportData();
+        } catch (IOException | DocumentException ex) {
+            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            JOptionPane.showMessageDialog(this, "" + errors + " errors outputted.", "Export Successful", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
 
     private void deleteNoteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteNoteButtonActionPerformed
         // TODO add your handling code here:
@@ -284,6 +291,7 @@ public class Interface extends javax.swing.JFrame {
         File file = openFileChooser.getSelectedFile();
         try {
             show = new Show(file);
+            show.sortRoles();
         } catch (ClassNotFoundException | FileNotFoundException ex) {
             Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -320,11 +328,7 @@ public class Interface extends javax.swing.JFrame {
     }//GEN-LAST:event_saveShowMenuButtonActionPerformed
 
     private void exportShowMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportShowMenuButtonActionPerformed
-        try {
-            exportData();
-        } catch (IOException ex) {
-            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        exportAction();
     }//GEN-LAST:event_exportShowMenuButtonActionPerformed
 
     private void addNewCharacterMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addNewCharacterMenuButtonActionPerformed
@@ -334,9 +338,10 @@ public class Interface extends javax.swing.JFrame {
          */
         AddCharacter dialog = new AddCharacter(this, true);
         dialog.setVisible(true);
-        String firstName = dialog.getFirstName();
-        String lastName = dialog.getLastName();
         Role role = dialog.getRole();
+        
+        characters.addElement(role.getName());
+        show.sortRoles();
     }//GEN-LAST:event_addNewCharacterMenuButtonActionPerformed
 
     private void deleteCharacterMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteCharacterMenuButtonActionPerformed
@@ -346,40 +351,26 @@ public class Interface extends javax.swing.JFrame {
          */
     }//GEN-LAST:event_deleteCharacterMenuButtonActionPerformed
     
-    private void exportData() throws IOException {
+    private int exportData() throws IOException, FileNotFoundException, DocumentException {
         DateTime dt = getDateInput();
+        int errors = 0;
         
         for (Role role : show.getCharacterList()) {
             // Only make an output file if there are lines to be written.
             if (!role.getNotes().isEmpty()) {
                 FormatOutputData data;
-                try {
-                    data = new FormatOutputData(role, dt);
-                    data.format();
-                } catch (FileNotFoundException | DocumentException ex) {
-                    ex.printStackTrace();
-                }
+                data = new FormatOutputData(role, dt);
+                errors += data.format();
                 
                 // Save the output for a later date
                 XMLWriter writer = new XMLWriter(role.getNotes());
                 writer.storeData(role.getName());
             }
         }
+        return errors;
     }
 
     private DateTime getDateInput() throws NumberFormatException, HeadlessException {
-        /*// Format the date from the infobox
-        String dateString = JOptionPane.showInputDialog(this,
-                "Enter the date of the rehearsal (MM/DD/(YY)YY).",
-                "Enter Date",
-                JOptionPane.INFORMATION_MESSAGE);
-        int[] dateArray = {0,0,0};
-        String[] splitDate = dateString.split("/");
-        for (int i = 0; i < splitDate.length; i++) {
-            dateArray[i] = Integer.parseInt(splitDate[i]);
-        }
-        Calendar calendar = new GregorianCalendar(dateArray[2], dateArray[0], dateArray[1]);
-        return calendar;*/
         String dateString = JOptionPane.showInputDialog(this,
                 "Enter the date of the rehearsal (MM/DD/(YY)YY).",
                 "Enter Date",
