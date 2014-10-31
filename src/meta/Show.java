@@ -22,6 +22,8 @@ import file.FileInput;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  *
@@ -110,5 +112,14 @@ public class Show {
      */
     public String getDirectory() {
         return directory;
+    }
+    
+    public void sortRoles() {
+        Collections.sort(characterList, new Comparator<Role>() {
+            @Override
+            public int compare(Role r1, Role r2) {
+                return r1.getName().compareTo(r2.getName());
+            }
+        });
     }
 }

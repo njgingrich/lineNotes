@@ -64,10 +64,12 @@ public class FormatOutputData {
      * @throws FileNotFoundException
      */
     
-    public void format() throws DocumentException, FileNotFoundException {
+    public int format() throws DocumentException, FileNotFoundException {
+        int errors = 0;
         writer.makePDFHeader();
         
         for (LineNote note: role.getNotes()) {
+            errors += 1;
             // Split the line into an array, length 4/5 for a word error, length 3 for anything else.
             String[] splitLines = {"", "", "", "", ""};
 
@@ -104,10 +106,8 @@ public class FormatOutputData {
                     
                 case("Added"):
                     noteIX = 3;
-                    /*
-                    Error format:
-                    "error, before|after"
-                    */
+                    //Error format:
+                    //"error, before|after"
                     String[] parts = note.getError().split(",");
                     String error = " (" + parts[0] + ") ";
                     String[] splitWords = parts[1].split("\\|");
@@ -140,5 +140,6 @@ public class FormatOutputData {
             writer.outputToPDF(note.getPageNum(), noteIX, splitLines);
         }
         writer.closePDF();
+        return errors;
     }
 }

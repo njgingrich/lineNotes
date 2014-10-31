@@ -52,12 +52,7 @@ public class FileInput {
     public FileInput(String directory, Role role) throws FileNotFoundException {
         this.role = role;
         String filePath = (directory + role.getName().replaceAll(" ", "") + ".xml");
-        System.out.println(filePath);
-        //try {
-            this.in = new BufferedReader(new FileReader(new File(filePath)));
-        //} catch (FileNotFoundException ex) {
-        //    System.out.println("No entries for " + role.getName());
-        //}
+        this.in = new BufferedReader(new FileReader(new File(filePath)));
     }
     
     /**

@@ -80,8 +80,8 @@
                   </Group>
                   <EmptySpace pref="18" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="roleTextField" linkSize="2" alignment="1" min="-2" pref="130" max="-2" attributes="0"/>
-                      <Component id="lastNameTextField" linkSize="2" alignment="1" min="-2" pref="120" max="-2" attributes="0"/>
+                      <Component id="lastNameTextField" linkSize="2" alignment="1" min="-2" pref="130" max="-2" attributes="0"/>
+                      <Component id="firstNameTextField" linkSize="2" alignment="1" min="-2" pref="120" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -92,12 +92,12 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="lastNameTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="firstNameTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="firstNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="roleTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="lastNameTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="lastNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="0" pref="10" max="32767" attributes="0"/>
@@ -116,9 +116,9 @@
             <Property name="text" type="java.lang.String" value="Last Name:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="roleTextField">
-        </Component>
         <Component class="javax.swing.JTextField" name="lastNameTextField">
+        </Component>
+        <Component class="javax.swing.JTextField" name="firstNameTextField">
         </Component>
       </SubComponents>
     </Container>
@@ -138,7 +138,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="roleLabel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
-                  <Component id="firstNameTextField" min="-2" pref="130" max="-2" attributes="0"/>
+                  <Component id="roleTextField" min="-2" pref="130" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -149,7 +149,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="roleLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="firstNameTextField" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="roleTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -162,7 +162,7 @@
             <Property name="text" type="java.lang.String" value="Role:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="firstNameTextField">
+        <Component class="javax.swing.JTextField" name="roleTextField">
         </Component>
       </SubComponents>
     </Container>

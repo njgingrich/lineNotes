@@ -18,6 +18,7 @@ package file;
 
 import com.thoughtworks.xstream.XStream;
 import java.io.BufferedReader;
+import java.io.EOFException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -30,7 +31,6 @@ import meta.Role;
  * @author Nathan
  */
 public class XMLReader {
-    private final String directory = "C:/Users/Nathan/Documents/Programming/Projects/2014/lineNotes/src/data/notes/saved/";
     private final BufferedReader reader;
     
     /**
@@ -55,8 +55,15 @@ public class XMLReader {
         xstream.alias("LineNote", LineNote.class);
         ObjectInputStream in = xstream.createObjectInputStream(reader);
         
-        LineNote noteToAdd = (LineNote)in.readObject();
-        notes.add(noteToAdd);
+        LineNote noteToAdd;
+        while (true) {
+            try {
+                noteToAdd = (LineNote)in.readObject();
+                notes.add(noteToAdd);
+            } catch (EOFException ex) {
+                break;
+            }
+        }
         return notes;
     } 
 }
