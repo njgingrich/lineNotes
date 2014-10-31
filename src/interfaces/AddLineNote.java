@@ -16,6 +16,7 @@
  */
 package interfaces;
 
+import java.awt.HeadlessException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import meta.LineNote;
@@ -250,30 +251,36 @@ public class AddLineNote extends javax.swing.JDialog {
         String pageNum = pageTextField.getText();
         String mistake = whichRadioButton().getText();
         note = new LineNote(line, error, pageNum, mistake);
-        if (mistake != "Called Line" && mistake != "Check Line") {
-            if (!line.contains(error)) {
-                if (mistake != "Wrong Order" && mistake != "Added") {
-                    JOptionPane.showMessageDialog(this, "String not found in the line.", "Validation Error", JOptionPane.ERROR_MESSAGE);
-                } else if (mistake == "Wrong Order") {
-                    String[] wrongWords = error.split("|");
-                    // Special case for order, have to split + fiddle with things
-                    if (!line.contains(wrongWords[0]) || !line.contains(wrongWords[1])) {
-                        JOptionPane.showMessageDialog(this, "String not found in the line.", "Validation Error", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                } else if (mistake == "Added") {
-                    String[] words = error.split(",")[1].split("|");
-                    if (!line.contains(words[0]) || !line.contains(words[1])) {
-                        JOptionPane.showMessageDialog(this, "String not found in the line.", "Validation Error", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                }
-            }
+        if (errorIsInLine(mistake, line)) {
+            JOptionPane.showMessageDialog(this, "String not found in the line.", "Validation Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
         
         clearText();
         super.dispose();
     }//GEN-LAST:event_addNoteButtonActionPerformed
+
+    private boolean errorIsInLine(String mistake, String line) throws HeadlessException {
+        if (mistake != "Called Line" && mistake != "Check Line") {
+            if (!line.contains(error)) {
+                if (mistake != "Wrong Order" && mistake != "Added") {
+                    return true;
+                } else if (mistake == "Wrong Order") {
+                    String[] wrongWords = error.split("|");
+                    // Special case for order, have to split + fiddle with things
+                    if (!line.contains(wrongWords[0]) || !line.contains(wrongWords[1])) {
+                        return true;
+                    }
+                } else if (mistake == "Added") {
+                    String[] words = error.split(",")[1].split("|");
+                    if (!line.contains(words[0]) || !line.contains(words[1])) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 
     private void RBWrongWordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RBWrongWordActionPerformed
         error = showDialog("Enter the error.", 0);

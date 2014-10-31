@@ -27,6 +27,12 @@ public class Actor {
     private final String firstName;
     private final String lastName;
     
+    public Actor(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        email = firstName + "." + lastName + "@hope.edu";
+    }
+    
     public Actor(String firstName, String lastName, String email) {
         this.firstName = firstName;
         this.lastName = lastName;

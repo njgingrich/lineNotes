@@ -18,7 +18,6 @@ package interfaces;
 
 import com.itextpdf.text.DocumentException;
 import file.FormatOutputData;
-import file.PDFWriter;
 import file.ShowFileFilter;
 import file.XMLWriter;
 import java.io.File;
@@ -88,10 +87,12 @@ public class Interface extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         exitMenuButton = new javax.swing.JMenuItem();
         editMenu = new javax.swing.JMenu();
-        editShowMenuButton = new javax.swing.JMenuItem();
         addNewNoteMenuButton = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         exportShowMenuButton = new javax.swing.JMenuItem();
+        showMenu = new javax.swing.JMenu();
+        addNewCharacterMenuButton = new javax.swing.JMenuItem();
+        deleteCharacterMenuButton = new javax.swing.JMenuItem();
 
         jMenuItem1.setText("jMenuItem1");
         noteRightClickMenu.add(jMenuItem1);
@@ -170,9 +171,6 @@ public class Interface extends javax.swing.JFrame {
 
         editMenu.setText("Edit");
 
-        editShowMenuButton.setText("Edit Show...");
-        editMenu.add(editShowMenuButton);
-
         addNewNoteMenuButton.setText("Add New Note...");
         editMenu.add(addNewNoteMenuButton);
         editMenu.add(jSeparator2);
@@ -186,6 +184,26 @@ public class Interface extends javax.swing.JFrame {
         editMenu.add(exportShowMenuButton);
 
         menuBar.add(editMenu);
+
+        showMenu.setText("Show");
+
+        addNewCharacterMenuButton.setText("Add New Character");
+        addNewCharacterMenuButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addNewCharacterMenuButtonActionPerformed(evt);
+            }
+        });
+        showMenu.add(addNewCharacterMenuButton);
+
+        deleteCharacterMenuButton.setText("Delete Character");
+        deleteCharacterMenuButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteCharacterMenuButtonActionPerformed(evt);
+            }
+        });
+        showMenu.add(deleteCharacterMenuButton);
+
+        menuBar.add(showMenu);
 
         setJMenuBar(menuBar);
 
@@ -259,25 +277,12 @@ public class Interface extends javax.swing.JFrame {
     }//GEN-LAST:event_deleteNoteButtonActionPerformed
 
     private void openShowMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openShowMenuButtonActionPerformed
-        /*showFileName = JOptionPane.showInputDialog(null, 
-                "Enter the name of the show.", 
-                "New Show", 
-                JOptionPane.INFORMATION_MESSAGE);
-        show = new Show(showFileName);
-        for (Role role : show.getCharacterList()) {
-            characters.addElement(role.getName());
-        }
-        
-        this.setTitle(getTitle() + " - " + showFileName);
-        deleteNoteButton.setEnabled(false);*/
         openFileChooser.setCurrentDirectory(new File("src/data"));
         openFileChooser.showOpenDialog(this);
         File file = openFileChooser.getSelectedFile();
         try {
             show = new Show(file);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FileNotFoundException ex) {
+        } catch (ClassNotFoundException | FileNotFoundException ex) {
             Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
         }
         for (Role role : show.getCharacterList()) {
@@ -319,6 +324,25 @@ public class Interface extends javax.swing.JFrame {
             Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_exportShowMenuButtonActionPerformed
+
+    private void addNewCharacterMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addNewCharacterMenuButtonActionPerformed
+        // TODO add your handling code here:
+        /**
+         * Bring up a dialog with boxes for First, Last names + the Role name
+         */
+        AddCharacter dialog = new AddCharacter(this, true);
+        dialog.setVisible(true);
+        String firstName = dialog.getFirstName();
+        String lastName = dialog.getLastName();
+        Role role = dialog.getRole();
+    }//GEN-LAST:event_addNewCharacterMenuButtonActionPerformed
+
+    private void deleteCharacterMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteCharacterMenuButtonActionPerformed
+        // TODO add your handling code here:
+        /**
+         * Bring up a dialog with a box for the role name
+         */
+    }//GEN-LAST:event_deleteCharacterMenuButtonActionPerformed
     
     private void exportData() throws IOException {
         // Format the date from the infobox
@@ -400,12 +424,13 @@ public class Interface extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem addNewCharacterMenuButton;
     private javax.swing.JMenuItem addNewNoteMenuButton;
     private javax.swing.JButton addNoteButton;
     private javax.swing.JList characterList;
+    private javax.swing.JMenuItem deleteCharacterMenuButton;
     private javax.swing.JButton deleteNoteButton;
     private javax.swing.JMenu editMenu;
-    private javax.swing.JMenuItem editShowMenuButton;
     private javax.swing.JMenuItem exitMenuButton;
     private javax.swing.JButton exportButton;
     private javax.swing.JMenuItem exportShowMenuButton;
@@ -425,6 +450,7 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JMenuItem openShowMenuButton;
     private javax.swing.JFileChooser saveFileChooser;
     private javax.swing.JMenuItem saveShowMenuButton;
+    private javax.swing.JMenu showMenu;
     // End of variables declaration//GEN-END:variables
     private String showFileName;
     private ListSelectionListener characterListListener = new ListSelectionListener() {
@@ -435,7 +461,7 @@ public class Interface extends javax.swing.JFrame {
                     
                     String roleName = characterList.getSelectedValue().toString();
                     for (Role role : show.getCharacterList()) {
-                        if (role.getName() == roleName) {
+                        if (role.getName().equals(roleName)) {
                             if (role.getNotes().isEmpty()) {
                                 notes.addElement("No notes found.");
                             } else {

@@ -71,11 +71,6 @@
             <Property name="text" type="java.lang.String" value="Edit"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="editShowMenuButton">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Edit Show..."/>
-              </Properties>
-            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="addNewNoteMenuButton">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Add New Note..."/>
@@ -89,6 +84,29 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportShowMenuButtonActionPerformed"/>
+              </Events>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
+        <Menu class="javax.swing.JMenu" name="showMenu">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Show"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="addNewCharacterMenuButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Add New Character"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addNewCharacterMenuButtonActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="deleteCharacterMenuButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Delete Character"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteCharacterMenuButtonActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>
