@@ -39,7 +39,7 @@ import org.joda.time.DateTime;
  * @author Nathan
  */
 public class PDFWriter {
-    private final String directory = "C:/Users/Nathan/Documents/Programming/Projects/2014/lineNotes/src/data/notes/";
+    private final String directory = "out/notes/";
     private final String[] errorOutput = new String[] {"Wrong Word", "Wrong Order", "Dropped", "Added", "Called Line", "Check Line", "Jumped Line"};
     Document document;
     Role role;

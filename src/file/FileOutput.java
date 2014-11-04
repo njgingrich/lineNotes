@@ -25,9 +25,7 @@ import java.io.IOException;
  * For outputting data to be saved
  * @author Nathan
  */
-public class FileOutput {
-    private String baseDirectory = "C:/Users/Nathan/Documents/Programming/Projects/2014/lineNotes/src/data/notes";
-    
+public class FileOutput {    
     /**
      * 
      */
@@ -44,11 +42,11 @@ public class FileOutput {
         try {
             File file = new File(fileName);
             FileWriter fstream = new FileWriter(file, true);
-            BufferedWriter out = new BufferedWriter(fstream);
-            out.write(data);
-            out.write("\n");
-            out.flush();
-            out.close();
+            try (BufferedWriter out = new BufferedWriter(fstream)) {
+                out.write(data);
+                out.write("\n");
+                out.flush();
+            }
         } catch (IOException e) {
             System.out.println(e);
         }

@@ -17,6 +17,7 @@
 package file;
 
 import com.thoughtworks.xstream.XStream;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -36,7 +37,7 @@ public class XMLWriter {
      * @param notes the notes to write
      */
     public XMLWriter(ArrayList<LineNote> notes) {
-        this.directory = "C:/Users/Nathan/Documents/Programming/Projects/2014/lineNotes/src/data/notes/saved/";
+        this.directory = "out/notes/saved/";
         this.notes = notes;
     }
     
@@ -56,14 +57,16 @@ public class XMLWriter {
      * @throws IOException
      */
     public void storeData(String characterName) throws IOException {
-        String newDirectory = directory + characterName.replaceAll(" ", "") + ".xml";
+        String newFileLocation = directory + "/notes/saved/" + characterName.replaceAll(" ", "") + ".xml";
         
         XStream xstream = new XStream();
         xstream.alias("LineNote", LineNote.class);
-        ObjectOutputStream out = xstream.createObjectOutputStream(new FileWriter(newDirectory));
-        for (LineNote note : notes) {
-            out.writeObject(note);
+        //FileWriter f = new FileWriter(new File(newFileLocation), true); // only for append mode
+        FileWriter f = new FileWriter(new File(newFileLocation), false);
+        try (ObjectOutputStream out = xstream.createObjectOutputStream(f)) {
+            for (LineNote note : notes) {
+                out.writeObject(note);
+            }
         }
-        out.close();
     }
 }

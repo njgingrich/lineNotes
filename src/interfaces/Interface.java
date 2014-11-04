@@ -24,8 +24,8 @@ import java.awt.HeadlessException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
@@ -33,10 +33,24 @@ import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JFileChooser;
 import meta.Role;
 import meta.Show;
 import meta.LineNote;
 import org.joda.time.DateTime;
+
+/**
+ * TO DO:
+ * Add edit note functionality (include a delete button, just bring up addNote dialog + edit it)
+ * Change error dialogs to be easier to use
+ * Fix / and \ regex on isValidatedString
+ * Have the text box word wrap
+ * Get inline error styling when displaying errors?
+ * Sort the notes by page # after adding a note
+ */
+
+
+
 
 /**
  *
@@ -72,7 +86,7 @@ public class Interface extends javax.swing.JFrame {
         noteRightClickMenu = new javax.swing.JPopupMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
         saveFileChooser = new javax.swing.JFileChooser();
-        openFileChooser = new javax.swing.JFileChooser();
+        openFileChooser = new javax.swing.JFileChooser(".");
         jSplitPane1 = new javax.swing.JSplitPane();
         jScrollPane2 = new javax.swing.JScrollPane();
         notesList = new javax.swing.JList();
@@ -262,6 +276,12 @@ public class Interface extends javax.swing.JFrame {
         for (Role role : show.getCharacterList()) {
             if (dialog.getCharacterName().equals(role.getName())) {
                 role.addNote(noteReturned);
+                role.sortNotes();
+                if (role.getNotes().size() == 1) {
+                    notes.removeElementAt(0);
+                }
+                notes.addElement(noteReturned);
+                notesList.setModel(notes);
             }
         }
     }//GEN-LAST:event_addNoteButtonActionPerformed
@@ -282,11 +302,19 @@ public class Interface extends javax.swing.JFrame {
     }
 
     private void deleteNoteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteNoteButtonActionPerformed
-        // TODO add your handling code here:
+        for (Role role : show.getCharacterList()) {
+            if (role.getName().equals(characterList.getSelectedValue().toString())) {
+                int index = notesList.getSelectedIndex();
+                role.removeNote(index);
+                role.sortNotes();
+                notes.removeElementAt(index);
+                notesList.setModel(notes);
+            }
+        }
     }//GEN-LAST:event_deleteNoteButtonActionPerformed
 
     private void openShowMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openShowMenuButtonActionPerformed
-        openFileChooser.setCurrentDirectory(new File("src/data"));
+        openFileChooser.setCurrentDirectory(new File("./out/"));
         openFileChooser.showOpenDialog(this);
         File file = openFileChooser.getSelectedFile();
         try {
@@ -310,13 +338,20 @@ public class Interface extends javax.swing.JFrame {
         */
         saveFileChooser.setCurrentDirectory(new File(show.getDirectory()));
         int returnVal = saveFileChooser.showSaveDialog(this);
-        if (returnVal == saveFileChooser.APPROVE_OPTION) {
-            //saveFileChooser.getSelectedFile();
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            try {
+                show.writeShowFile(saveFileChooser.getSelectedFile());
+            } catch (IOException ex) {
+                Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            /**
+             * Output the XML data
+             */
             for (Role role : show.getCharacterList()) {
             // Only make an output file if there are lines to be written.
             if (!role.getNotes().isEmpty()) {
-                // Save the output for a later date
-                XMLWriter writer = new XMLWriter(role.getNotes());
+                XMLWriter writer = new XMLWriter(role.getNotes(), show.getDirectory());
                 try {
                     writer.storeData(role.getName());
                 } catch (IOException ex) {
@@ -340,6 +375,7 @@ public class Interface extends javax.swing.JFrame {
         dialog.setVisible(true);
         Role role = dialog.getRole();
         
+        show.addRole(role);
         characters.addElement(role.getName());
         show.sortRoles();
     }//GEN-LAST:event_addNewCharacterMenuButtonActionPerformed
@@ -349,6 +385,20 @@ public class Interface extends javax.swing.JFrame {
         /**
          * Bring up a dialog with a box for the role name
          */
+        String response = JOptionPane.showInputDialog(this, 
+                                                      "Enter the character name to delete.", 
+                                                      "Delete Role", 
+                                                      JOptionPane.INFORMATION_MESSAGE);
+        ArrayList<Role> newRoles = new ArrayList<>(show.getCharacterList());
+        Iterator<Role> itr = newRoles.iterator();
+        while (itr.hasNext()) {
+            if (itr.next().getName().equals(response)) {
+                characters.removeElement(itr);
+                itr.remove();
+                break;
+            }
+        }
+        show.sortRoles();
     }//GEN-LAST:event_deleteCharacterMenuButtonActionPerformed
     
     private int exportData() throws IOException, FileNotFoundException, DocumentException {
@@ -461,8 +511,7 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JMenuItem saveShowMenuButton;
     private javax.swing.JMenu showMenu;
     // End of variables declaration//GEN-END:variables
-    private String showFileName;
-    private ListSelectionListener characterListListener = new ListSelectionListener() {
+    private final ListSelectionListener characterListListener = new ListSelectionListener() {
         @Override
             public void valueChanged(ListSelectionEvent arg0) {
                 if (!arg0.getValueIsAdjusting()) {

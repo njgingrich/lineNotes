@@ -26,6 +26,7 @@ import meta.LineNote;
  * @author Nathan
  */
 public class AddLineNote extends javax.swing.JDialog {
+    private String basicRegex = "a-zA-Z0-9\\.\\$\\?\"!:;',\\-\\(\\)\\*\\\\\\/\\+ $";
     private LineNote note;
     private String characterName;
     private String error = "";
@@ -225,7 +226,7 @@ public class AddLineNote extends javax.swing.JDialog {
             
             return;
         }
-        if (!isValidatedString(lineNoteEditor.getText(), "^[a-zA-Z0-9\\.\\$\\?\"!:;',\\-\\(\\) ]+$")) {
+        if (!isValidatedString(lineNoteEditor.getText(), "^[" + basicRegex + "]+$")) {
             JOptionPane.showMessageDialog(this,
             "You need to enter a string for the line.",
             "Validation Error",
@@ -304,11 +305,11 @@ public class AddLineNote extends javax.swing.JDialog {
 
     private String showDialog(String message, int button) {
         String response = "";
-        String regex = "^[a-zA-Z0-9\\.\\$\\?\"!:;',\\-\\(\\) ]+$";
+        String regex = "^[" + basicRegex + "]+$";
         
-        // Also allow the | character for wrong word
+        // Also allow the | character for wrong word or added
         if (button == 1 || button == 3) {
-            regex = "^[a-zA-Z0-9\\.\\$\\?\"!:;',\\-\\(\\)\\| ]+$";
+            regex = "^[ " + basicRegex + "\\|" + "]+$";
         }
         
         boolean isNotValidString = true;

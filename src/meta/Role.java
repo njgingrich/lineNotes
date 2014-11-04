@@ -17,6 +17,8 @@
 package meta;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  *
@@ -65,5 +67,18 @@ public class Role {
      */
     public void addNote(LineNote note) {
         notes.add(note);
+    }
+    
+    public void removeNote(int index) {
+        notes.remove(index);
+    }
+    
+    public void sortNotes() {
+        Collections.sort(notes, new Comparator<LineNote>() {
+            @Override
+            public int compare(LineNote ln1, LineNote ln2) {
+                return ln1.getPageNum().compareTo(ln2.getPageNum());
+            }
+        });
     }
 }

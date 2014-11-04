@@ -19,8 +19,10 @@ package meta;
 import java.util.ArrayList;
 
 import file.FileInput;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
@@ -55,7 +57,7 @@ public class Show {
                 Need to handle FileNotFound exceptions here
                 */
                 try {
-                    FileInput savedData = new FileInput(getDirectory() + "/notes/saved/", role);
+                    FileInput savedData = new FileInput(directory + "/notes/saved/", role);
                     ArrayList<LineNote> notesToAdd = savedData.getSavedLineNotes();
                     for(LineNote note: notesToAdd) {
                         role.addNote(note);
@@ -80,7 +82,6 @@ public class Show {
                 i += 2;
             } else if (line.startsWith("#")) {
                 // Line is a comment
-                continue;
             } else {
                 // Data is in format Character Name>Actor Name
                 String[] split = line.split(">");
@@ -93,18 +94,33 @@ public class Show {
         }
         return getTitle();
     }
+    
+    public void writeShowFile(File file) throws IOException {
+        //File file = new File(directory + showFile + ".show");
+        System.out.println("writing to" + file.getAbsolutePath());
+        if (!file.exists()) {
+            file.createNewFile();
+        }
+        
+        FileWriter fw = new FileWriter(file);
+        try (BufferedWriter out = new BufferedWriter(fw)) {
+            out.write("#Show Name\n");
+            out.write(title + "\n");
+            
+            out.write("#Characters\n");
+            for (Role role : characterList) {
+                out.write(role.getName() + ">" + role.getActor().getName() + "\n");
+            }
+        }
+        System.out.println("Wrote file.");
+    }
+    
+    
     /**
      * @return the characterList
      */
     public ArrayList<Role> getCharacterList() {
         return characterList;
-    }
-
-    /**
-     * @return the title
-     */
-    public String getTitle() {
-        return title;
     }
 
     /**
@@ -114,6 +130,16 @@ public class Show {
         return directory;
     }
     
+    /**
+     * @return the title
+     */
+    public String getTitle() {
+        return title;
+    }
+    
+    /**
+     * Sort the roles alphabetically
+     */
     public void sortRoles() {
         Collections.sort(characterList, new Comparator<Role>() {
             @Override
@@ -121,5 +147,15 @@ public class Show {
                 return r1.getName().compareTo(r2.getName());
             }
         });
+    }
+    
+    public void addRole(Role role) {
+        characterList.add(role);
+        sortRoles();
+    }
+    
+    public void deleteRole(int index) {
+        characterList.remove(index);
+        sortRoles();
     }
 }

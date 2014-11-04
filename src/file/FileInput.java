@@ -16,7 +16,6 @@
  */
 package file;
 
-import com.thoughtworks.xstream.XStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -32,7 +31,7 @@ import meta.Role;
 public class FileInput {
     BufferedReader in;
     Role role;
-    private final String dir = "C:/Users/Nathan/Documents/Programming/Projects/2014/lineNotes/src/data";
+    String directory;
 
     /**
      * Create a new FileInput with the given file
@@ -41,6 +40,8 @@ public class FileInput {
      */
     public FileInput(File f) throws FileNotFoundException {
         this.in = new BufferedReader(new FileReader(f));
+        directory = f.getParent();
+        System.out.println("Path: " + directory);
     }
 
     /**
@@ -50,6 +51,7 @@ public class FileInput {
      * @throws FileNotFoundException
      */
     public FileInput(String directory, Role role) throws FileNotFoundException {
+        this.directory = directory;
         this.role = role;
         String filePath = (directory + role.getName().replaceAll(" ", "") + ".xml");
         this.in = new BufferedReader(new FileReader(new File(filePath)));
@@ -72,7 +74,7 @@ public class FileInput {
      * @return the directory
      */
     public String getDirectory() {
-        return dir;
+        return directory;
     }
     
     /**
