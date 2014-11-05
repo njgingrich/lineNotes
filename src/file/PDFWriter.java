@@ -30,7 +30,6 @@ import com.itextpdf.text.pdf.PdfWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.util.Calendar;
 import meta.Role;
 import org.joda.time.DateTime;
 
@@ -39,7 +38,7 @@ import org.joda.time.DateTime;
  * @author Nathan
  */
 public class PDFWriter {
-    private final String directory = "out/notes/";
+    private final String directory;
     private final String[] errorOutput = new String[] {"Wrong Word", "Wrong Order", "Dropped", "Added", "Called Line", "Check Line", "Jumped Line"};
     Document document;
     Role role;
@@ -57,9 +56,10 @@ public class PDFWriter {
      * @throws FileNotFoundException
      * @throws DocumentException
      */
-    public PDFWriter(Role role, DateTime date) throws FileNotFoundException, DocumentException {
+    public PDFWriter(Role role, DateTime date, String title) throws FileNotFoundException, DocumentException {
         this.role = role;
         this.date = date;
+        directory = "out/" + title + "/notes/";
         setFontStyles();
         
         System.out.println(directory + 

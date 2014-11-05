@@ -19,7 +19,7 @@ package interfaces;
 import com.itextpdf.text.DocumentException;
 import file.FormatOutputData;
 import file.ShowFileFilter;
-import file.XMLWriter;
+import file.XWriter;
 import java.awt.HeadlessException;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -43,24 +43,21 @@ import org.joda.time.DateTime;
  * TO DO:
  * Add edit note functionality (include a delete button, just bring up addNote dialog + edit it)
  * Change error dialogs to be easier to use
- * Fix / and \ regex on isValidatedString
- * Have the text box word wrap
  * Get inline error styling when displaying errors?
- * Sort the notes by page # after adding a note
+ * When sorting, you have to check for line + page number if they're the same
+ * Fix nullPointerExceptions when clicking on buttons you shouldn't be
+ * Make output modular
  */
-
-
-
 
 /**
  *
  * @author Nathan
  */
 public class Interface extends javax.swing.JFrame {
-    DefaultListModel characters;
-    DefaultListModel notes;
-    DefaultComboBoxModel charactersComboBox;
-    Show show;
+    private DefaultListModel characters;
+    private DefaultListModel notes;
+    private DefaultComboBoxModel charactersComboBox;
+    private Show show;
     /**
      * Creates new form Interface
      */
@@ -101,6 +98,7 @@ public class Interface extends javax.swing.JFrame {
         openShowMenuButton = new javax.swing.JMenuItem();
         saveShowMenuButton = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        optionsMenuButton = new javax.swing.JMenuItem();
         exitMenuButton = new javax.swing.JMenuItem();
         editMenu = new javax.swing.JMenu();
         addNewNoteMenuButton = new javax.swing.JMenuItem();
@@ -118,8 +116,10 @@ public class Interface extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Line Notes Editor");
 
-        notesList.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        notesList.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        notesList.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         notesList.setModel(notes);
+        notesList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane2.setViewportView(notesList);
 
         jSplitPane1.setRightComponent(jScrollPane2);
@@ -127,6 +127,8 @@ public class Interface extends javax.swing.JFrame {
         jScrollPane3.setMinimumSize(new java.awt.Dimension(60, 60));
 
         characterList.setModel(characters);
+        characterList.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        characterList.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         characterList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane3.setViewportView(characterList);
 
@@ -174,6 +176,14 @@ public class Interface extends javax.swing.JFrame {
         });
         fileMenu.add(saveShowMenuButton);
         fileMenu.add(jSeparator1);
+
+        optionsMenuButton.setText("Options...");
+        optionsMenuButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                optionsMenuButtonActionPerformed(evt);
+            }
+        });
+        fileMenu.add(optionsMenuButton);
 
         exitMenuButton.setText("Exit");
         exitMenuButton.addActionListener(new java.awt.event.ActionListener() {
@@ -276,12 +286,13 @@ public class Interface extends javax.swing.JFrame {
         for (Role role : show.getCharacterList()) {
             if (dialog.getCharacterName().equals(role.getName())) {
                 role.addNote(noteReturned);
-                role.sortNotes();
                 if (role.getNotes().size() == 1) {
                     notes.removeElementAt(0);
                 }
-                notes.addElement(noteReturned);
-                notesList.setModel(notes);
+                if (charName.equals(role.getName())) {
+                    notes.addElement(noteReturned);
+                }
+                role.sortNotes();
             }
         }
     }//GEN-LAST:event_addNoteButtonActionPerformed
@@ -297,7 +308,7 @@ public class Interface extends javax.swing.JFrame {
         } catch (IOException | DocumentException ex) {
             Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            JOptionPane.showMessageDialog(this, "" + errors + " errors outputted.", "Export Successful", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "" + errors + " notes outputted.", "Export Successful", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -339,28 +350,19 @@ public class Interface extends javax.swing.JFrame {
         saveFileChooser.setCurrentDirectory(new File(show.getDirectory()));
         int returnVal = saveFileChooser.showSaveDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            try {
-                show.writeShowFile(saveFileChooser.getSelectedFile());
-            } catch (IOException ex) {
-                Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
-            /**
-             * Output the XML data
-             */
-            for (Role role : show.getCharacterList()) {
-            // Only make an output file if there are lines to be written.
-            if (!role.getNotes().isEmpty()) {
-                XMLWriter writer = new XMLWriter(role.getNotes(), show.getDirectory());
-                try {
-                    writer.storeData(role.getName());
-                } catch (IOException ex) {
-                    Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
+            saveShow(saveFileChooser.getSelectedFile());
         }
-      }
     }//GEN-LAST:event_saveShowMenuButtonActionPerformed
+
+    private void saveShow(File f) {
+        try {
+            show.writeShowFile(f);
+        } catch (IOException ex) {
+            Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        exportAction();
+    }
 
     private void exportShowMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportShowMenuButtonActionPerformed
         exportAction();
@@ -400,6 +402,14 @@ public class Interface extends javax.swing.JFrame {
         }
         show.sortRoles();
     }//GEN-LAST:event_deleteCharacterMenuButtonActionPerformed
+
+    private void optionsMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_optionsMenuButtonActionPerformed
+        optionMenu menu = new optionMenu(this, true);
+        menu.setVisible(true);
+        
+        
+        
+    }//GEN-LAST:event_optionsMenuButtonActionPerformed
     
     private int exportData() throws IOException, FileNotFoundException, DocumentException {
         DateTime dt = getDateInput();
@@ -409,11 +419,11 @@ public class Interface extends javax.swing.JFrame {
             // Only make an output file if there are lines to be written.
             if (!role.getNotes().isEmpty()) {
                 FormatOutputData data;
-                data = new FormatOutputData(role, dt);
+                data = new FormatOutputData(role, dt, show.getTitle());
                 errors += data.format();
                 
                 // Save the output for a later date
-                XMLWriter writer = new XMLWriter(role.getNotes());
+                XWriter writer = new XWriter(role.getNotes(), show.getDirectory(), show.getTitle());
                 writer.storeData(role.getName());
             }
         }
@@ -433,7 +443,7 @@ public class Interface extends javax.swing.JFrame {
         DateTime dt = new DateTime(dateArray[2], dateArray[0], dateArray[1], 0, 0);
         return dt;
     }
-    
+        
     /**
      * @param args the command line arguments
      */
@@ -507,6 +517,7 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JList notesList;
     private javax.swing.JFileChooser openFileChooser;
     private javax.swing.JMenuItem openShowMenuButton;
+    private javax.swing.JMenuItem optionsMenuButton;
     private javax.swing.JFileChooser saveFileChooser;
     private javax.swing.JMenuItem saveShowMenuButton;
     private javax.swing.JMenu showMenu;
@@ -523,8 +534,11 @@ public class Interface extends javax.swing.JFrame {
                             if (role.getNotes().isEmpty()) {
                                 notes.addElement("No notes found.");
                             } else {
+                                role.sortNotes();
                                 for (LineNote note : role.getNotes()) {
+                                    //LineNote newNote = htmlify(note);
                                     notes.addElement(note);
+                                    
                                 }
                             }
                         }

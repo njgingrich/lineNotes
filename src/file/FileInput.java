@@ -85,7 +85,7 @@ public class FileInput {
      * @throws FileNotFoundException
      */
     public ArrayList<LineNote> getSavedLineNotes() throws IOException, ClassNotFoundException, FileNotFoundException {
-        XMLReader read = new XMLReader(in);
+        XReader read = new XReader(in);
         return read.readData(role);
     }
 }

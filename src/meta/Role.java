@@ -77,7 +77,7 @@ public class Role {
         Collections.sort(notes, new Comparator<LineNote>() {
             @Override
             public int compare(LineNote ln1, LineNote ln2) {
-                return ln1.getPageNum().compareTo(ln2.getPageNum());
+                return Integer.parseInt(ln1.getPageNum()) - Integer.parseInt((ln2.getPageNum()));
             }
         });
     }

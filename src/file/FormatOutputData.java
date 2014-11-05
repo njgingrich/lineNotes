@@ -41,10 +41,10 @@ public class FormatOutputData {
      * @throws FileNotFoundException
      * @throws DocumentException
      */
-    public FormatOutputData(Role role, DateTime date) throws FileNotFoundException, DocumentException {
+    public FormatOutputData(Role role, DateTime date, String title) throws FileNotFoundException, DocumentException {
         this.role = role;
         this.date = date;
-        writer = new PDFWriter(role, date);
+        writer = new PDFWriter(role, date, title);
     }
     
     /*
@@ -91,6 +91,7 @@ public class FormatOutputData {
 
                     splitLines[0] = note.getLine().substring(0, errorIX);
                     splitLines[1] = "[" + note.getLine().substring(errorIX, errorIX + splitError[0].length()) + "]"; // Error #1
+                    System.out.println(splitLines[1]);
                     splitLines[2] = note.getLine().substring(errorIX + splitError[0].length(), error2IX); // Will be "" if errors are adjacent
                     splitLines[3] = "[" + note.getLine().substring(error2IX, error2IX + splitError[1].length()) + "]"; // Error #2
                     splitLines[4] = note.getLine().substring(error2IX + splitError[1].length());

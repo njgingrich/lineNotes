@@ -26,7 +26,7 @@ import meta.LineNote;
  * @author Nathan
  */
 public class AddLineNote extends javax.swing.JDialog {
-    private String basicRegex = "a-zA-Z0-9\\.\\$\\?\"!:;',\\-\\(\\)\\*\\\\\\/\\+ $";
+    private final String basicRegex = "a-zA-Z0-9\\.\\$\\?\"!:;',\\-\\(\\)\\*\\\\\\/\\+ $";
     private LineNote note;
     private String characterName;
     private String error = "";
@@ -57,8 +57,6 @@ public class AddLineNote extends javax.swing.JDialog {
         characterLabel = new javax.swing.JLabel();
         pageLabel = new javax.swing.JLabel();
         pageTextField = new javax.swing.JTextField();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        lineNoteEditor = new javax.swing.JEditorPane();
         RBWrongWord = new javax.swing.JRadioButton();
         RBAdded = new javax.swing.JRadioButton();
         RBJumpedLine = new javax.swing.JRadioButton();
@@ -69,14 +67,14 @@ public class AddLineNote extends javax.swing.JDialog {
         clearButton = new javax.swing.JButton();
         addNoteButton = new javax.swing.JButton();
         characterSelector = new javax.swing.JComboBox();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        lineNoteEditor = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         characterLabel.setText("Character:");
 
         pageLabel.setText("Page:");
-
-        jScrollPane1.setViewportView(lineNoteEditor);
 
         buttonGroup1.add(RBWrongWord);
         RBWrongWord.setText("Wrong Word");
@@ -140,6 +138,13 @@ public class AddLineNote extends javax.swing.JDialog {
 
         characterSelector.setModel(characterList);
 
+        lineNoteEditor.setColumns(20);
+        lineNoteEditor.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        lineNoteEditor.setLineWrap(true);
+        lineNoteEditor.setRows(5);
+        lineNoteEditor.setWrapStyleWord(true);
+        jScrollPane2.setViewportView(lineNoteEditor);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -147,7 +152,7 @@ public class AddLineNote extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
+                    .addComponent(jScrollPane2)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(characterLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -190,7 +195,7 @@ public class AddLineNote extends javax.swing.JDialog {
                     .addComponent(pageTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(characterSelector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(RBWrongWord)
@@ -406,8 +411,8 @@ public class AddLineNote extends javax.swing.JDialog {
     private javax.swing.JLabel characterLabel;
     private javax.swing.JComboBox characterSelector;
     private javax.swing.JButton clearButton;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JEditorPane lineNoteEditor;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTextArea lineNoteEditor;
     private javax.swing.JLabel pageLabel;
     private javax.swing.JTextField pageTextField;
     // End of variables declaration//GEN-END:variables
