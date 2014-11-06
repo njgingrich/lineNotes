@@ -21,6 +21,9 @@ import file.FormatOutputData;
 import file.ShowFileFilter;
 import file.json.JSONWriter;
 import java.awt.HeadlessException;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -34,9 +37,9 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
+import javax.swing.JTable;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import meta.Role;
 import meta.Show;
@@ -75,7 +78,22 @@ public class Interface extends javax.swing.JFrame {
         setup();
         initComponents();
         characterList.addListSelectionListener(characterListListener);
-        //notesTable.addListSelectionListener(notesTableListener);
+        
+        notesTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent me) {
+                JTable table =(JTable)me.getSource();
+                Point p = me.getPoint();
+                int row = table.rowAtPoint(p);
+                if (me.getClickCount() == 2) {
+                    editLineNote(notesTableModel.getRow(row), characterList.getSelectedValue().toString());
+                }
+            }
+        });
+        notesTable.getColumn("Page").setMaxWidth(40);
+        notesTable.getColumn("Page").setMinWidth(40);
+        notesTable.getColumn("Line").setPreferredWidth(300);
+        notesTable.getColumn("Error").setPreferredWidth(150);
     }
 
     /**
@@ -135,7 +153,18 @@ public class Interface extends javax.swing.JFrame {
 
         jSplitPane1.setLeftComponent(jScrollPane3);
 
+        notesTable.setAutoCreateRowSorter(true);
+        notesTable.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        notesTable.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        notesTableModel = new NotesTableModel();
+        ArrayList<String> list = new ArrayList<>();
+        list.add("Page");
+        list.add("Line");
+        list.add("Error");
+        list.add("Note");
+        notesTableModel.addColumns(list);
         notesTable.setModel(notesTableModel);
+        notesTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         notesTable.setColumnSelectionAllowed(true);
         jScrollPane1.setViewportView(notesTable);
         notesTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
@@ -265,7 +294,7 @@ public class Interface extends javax.swing.JFrame {
                         .addComponent(exportButton)
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 828, Short.MAX_VALUE)
+                        .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 880, Short.MAX_VALUE)
                         .addGap(10, 10, 10))))
         );
 
@@ -275,14 +304,14 @@ public class Interface extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jSplitPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 358, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 423, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(exportButton)
                     .addComponent(addNoteButton)
                     .addComponent(deleteNoteButton)
                     .addComponent(testerButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -292,14 +321,17 @@ public class Interface extends javax.swing.JFrame {
         for (Role role : show.getCharacterList()) {
             charactersComboBox.addElement(role.getName());
         }
-        AddLineNote dialog = new AddLineNote(this, true, charactersComboBox);
+        LineNoteDialog dialog = new LineNoteDialog(this, true, charactersComboBox);
         dialog.setVisible(true);
+        addNote(dialog);
+    }//GEN-LAST:event_addNoteButtonActionPerformed
+
+    private boolean addNote(LineNoteDialog dialog) {
         LineNote noteReturned = dialog.getLineNote();
         String charName = dialog.getCharacterName();
         if (noteReturned == null || charName == null) {
-            return;
+            return true;
         }
-        
         for (Role role : show.getCharacterList()) {
             if (dialog.getCharacterName().equals(role.getName())) {
                 role.addNote(noteReturned);
@@ -308,15 +340,16 @@ public class Interface extends javax.swing.JFrame {
                 }
                 if (charName.equals(role.getName())) {
                     //notes.addElement(noteReturned);
+                    notesTableModel.addRow(noteReturned);
                 }
                 role.sortNotes();
             }
         }
-        
         if(prefs.Autosave()) {
             saveShow(showFile);
         }
-    }//GEN-LAST:event_addNoteButtonActionPerformed
+        return false;
+    }
 
     private void exportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportButtonActionPerformed
         exportAction();
@@ -325,7 +358,8 @@ public class Interface extends javax.swing.JFrame {
     private void exportAction() throws HeadlessException {
         int errors = 0;
         try {
-            errors = exportData();
+            DateTime dt = getDateInput();
+            errors = exportData(dt);
         } catch (IOException | DocumentException ex) {
             Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
@@ -336,14 +370,18 @@ public class Interface extends javax.swing.JFrame {
     private void deleteNoteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteNoteButtonActionPerformed
         for (Role role : show.getCharacterList()) {
             if (role.getName().equals(characterList.getSelectedValue().toString())) {
-                //int index = notesTable.getSelectedIndex();
-               // role.removeNote(index);
-                role.sortNotes();
-                //notes.removeElementAt(index);
-                notesTable.setModel(notes);
+                int index = notesTable.getSelectedRow();
+                deleteNote(role, index);
             }
         }
     }//GEN-LAST:event_deleteNoteButtonActionPerformed
+
+    private void deleteNote(Role role, int index) {
+        role.removeNote(index);
+        notesTableModel.removeRow(index);
+        role.sortNotes();
+        notesTable.setModel(notes);
+    }
 
     private void openShowMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openShowMenuButtonActionPerformed
         openFileChooser.setCurrentDirectory(new File("./out/"));
@@ -449,8 +487,7 @@ public class Interface extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_testerButtonActionPerformed
     
-    private int exportData() throws IOException, FileNotFoundException, DocumentException {
-        DateTime dt = getDateInput();
+    private int exportData(DateTime dt) throws IOException, FileNotFoundException, DocumentException {
         int errors = 0;
         
         for (Role role : show.getCharacterList()) {
@@ -462,7 +499,7 @@ public class Interface extends javax.swing.JFrame {
                 
                 // Save the output for a later date
                 JSONWriter writer = new JSONWriter(role.getNotes(), show.getDirectory(), show.getTitle());
-                writer.storeXMLData(role.getName());
+                writer.storeJsonData(role.getName());
             }
         }
         return errors;
@@ -481,20 +518,26 @@ public class Interface extends javax.swing.JFrame {
         DateTime dt = new DateTime(dateArray[2], dateArray[0], dateArray[1], 0, 0);
         return dt;
     }
+    
+    public void editLineNote(LineNote note, String character) {
+        LineNoteDialog dialog = new LineNoteDialog(this, true, charactersComboBox, note, character);
+        dialog.setVisible(true);
+        addNote(dialog);
+        for (Role role : show.getCharacterList()) {
+            if (role.getName().equals(character)) {
+                int index = notesTable.getSelectedRow();
+                deleteNote(role, index);
+            }
+        }
+    }
         
     private void setup() {
         characters = new DefaultListModel<>();
-        notesTableModel = new NotesTableModel();
-        ArrayList<String> list = new ArrayList<>();
-        list.add("Page");
-        list.add("Line");
-        list.add("Error");
-        list.add("Note");
-        notesTableModel.addColumns(list);
+        // Setup up the NotesTable with columns
         
         charactersComboBox = new DefaultComboBoxModel<>();
         
-        prefs = new Preferences(true, true, true, "hope.edu"); // replace when you load the json show file
+        prefs = new Preferences(true, true, false, "hope.edu"); // replace when you load the json show file
         
     }
     
@@ -581,17 +624,14 @@ public class Interface extends javax.swing.JFrame {
         @Override
             public void valueChanged(ListSelectionEvent arg0) {
                 if (!arg0.getValueIsAdjusting()) {
-                    //notes.clear();
+                    notesTableModel.setRowCount(0);
                     
                     String roleName = characterList.getSelectedValue().toString();
                     for (Role role : show.getCharacterList()) {
                         if (role.getName().equals(roleName)) {
-                            if (role.getNotes().isEmpty()) {
-                                //notes.addElement("No notes found.");
-                            } else {
+                            if (!role.getNotes().isEmpty()) {
                                 role.sortNotes();
                                 for (LineNote note : role.getNotes()) {
-                                    //notes.addElement(note);
                                     notesTableModel.addRow(note);
                                     
                                 }
