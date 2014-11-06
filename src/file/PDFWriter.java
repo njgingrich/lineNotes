@@ -65,20 +65,20 @@ public class PDFWriter {
         System.out.println(directory + 
                              "UT_LineNotes" + 
                              role.getName().replaceAll(" ", "") + 
-                             date.monthOfYear().getAsString() + "." +
-                             date.dayOfMonth().getAsString() + "." +
+                             date.monthOfYear().getAsString() + "-" +
+                             date.dayOfMonth().getAsString() + "-" +
                              date.year().get() + ".pdf");
         File file = new File(directory + 
                              "UT_LineNotes" + 
                              role.getName().replaceAll(" ", "") + 
-                             date.monthOfYear().getAsString() + "." +
-                             date.dayOfMonth().getAsString() + "." +
+                             date.monthOfYear().getAsString() + "-" +
+                             date.dayOfMonth().getAsString() + "-" +
                              date.year().get() + ".pdf");
         FileOutputStream fileout = new FileOutputStream(file);
         document = new Document();
         PdfWriter.getInstance(document, fileout);
         document.addAuthor("Nathan Gingrich");
-        document.addTitle("Line Notes = " + role.getName());
+        document.addTitle("Line Notes " + role.getName());
         document.open();
     }
 
@@ -170,9 +170,10 @@ public class PDFWriter {
     public void makePDFHeader() throws DocumentException {
         PdfPTable headerTable = new PdfPTable(2);
         headerTable.setWidthPercentage(100);
+                
         PdfPCell dateCell = new PdfPCell(new Paragraph("Date: " +
-                                                       date.dayOfMonth().getAsString() + "/" +
-                                                       date.year().get(), lineFont));
+                                                       date.monthOfYear().getAsString() + "/" +
+                                                       date.dayOfMonth().getAsString(), lineFont));
         dateCell.setHorizontalAlignment(Element.ALIGN_LEFT);
         dateCell.setBorder(PdfPCell.NO_BORDER);
         dateCell.setPadding(0.3f);

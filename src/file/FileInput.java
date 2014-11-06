@@ -16,6 +16,7 @@
  */
 package file;
 
+import file.json.JSONReader;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -41,7 +42,6 @@ public class FileInput {
     public FileInput(File f) throws FileNotFoundException {
         this.in = new BufferedReader(new FileReader(f));
         directory = f.getParent();
-        System.out.println("Path: " + directory);
     }
 
     /**
@@ -53,7 +53,8 @@ public class FileInput {
     public FileInput(String directory, Role role) throws FileNotFoundException {
         this.directory = directory;
         this.role = role;
-        String filePath = (directory + role.getName().replaceAll(" ", "") + ".xml");
+        String filePath = (directory + role.getName().replaceAll(" ", "") + ".json");
+        System.out.println("Path: " + filePath);
         this.in = new BufferedReader(new FileReader(new File(filePath)));
     }
     
@@ -85,7 +86,7 @@ public class FileInput {
      * @throws FileNotFoundException
      */
     public ArrayList<LineNote> getSavedLineNotes() throws IOException, ClassNotFoundException, FileNotFoundException {
-        XReader read = new XReader(in);
+        JSONReader read = new JSONReader(in);
         return read.readData(role);
     }
 }

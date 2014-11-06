@@ -16,6 +16,10 @@
  */
 package meta;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
+import com.thoughtworks.xstream.io.json.JsonWriter;
 import java.util.ArrayList;
 
 import file.FileInput;
@@ -24,6 +28,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -93,6 +98,17 @@ public class Show {
             }
         }
         return getTitle();
+             
+        /*
+        XStream xstream = new XStream(new JsonHierarchicalStreamDriver() {
+            public HierarchicalStreamWriter createWriter(Writer writer) {
+                return new JsonWriter(writer, JsonWriter.DROP_ROOT_MODE);
+            }
+        });
+        xstream.setMode(XStream.NO_REFERENCES);
+        xstream.alias("LineNotes", LineNote.class);
+        //Product product = (Product)xstream.fromXML(json);*/
+        
     }
     
     public void writeShowFile(File file) throws IOException {

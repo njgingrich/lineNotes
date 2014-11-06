@@ -19,7 +19,7 @@ package interfaces;
 import com.itextpdf.text.DocumentException;
 import file.FormatOutputData;
 import file.ShowFileFilter;
-import file.XWriter;
+import file.json.JSONWriter;
 import java.awt.HeadlessException;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -38,6 +38,7 @@ import meta.Role;
 import meta.Show;
 import meta.LineNote;
 import org.joda.time.DateTime;
+import preferences.Preferences;
 
 /**
  * TO DO:
@@ -58,13 +59,14 @@ public class Interface extends javax.swing.JFrame {
     private DefaultListModel notes;
     private DefaultComboBoxModel charactersComboBox;
     private Show show;
+    private File showFile;
+    private Preferences prefs;
+    
     /**
      * Creates new form Interface
      */
     public Interface() {
-        characters = new DefaultListModel<>();
-        notes = new DefaultListModel<>();
-        charactersComboBox = new DefaultComboBoxModel<>();
+        setup();
         initComponents();
         characterList.addListSelectionListener(characterListListener);
         notesList.addListSelectionListener(notesListListener);
@@ -92,6 +94,7 @@ public class Interface extends javax.swing.JFrame {
         exportButton = new javax.swing.JButton();
         addNoteButton = new javax.swing.JButton();
         deleteNoteButton = new javax.swing.JButton();
+        testerButton = new javax.swing.JButton();
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         newShowMenuButton = new javax.swing.JMenuItem();
@@ -152,6 +155,13 @@ public class Interface extends javax.swing.JFrame {
         deleteNoteButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 deleteNoteButtonActionPerformed(evt);
+            }
+        });
+
+        testerButton.setText("Test Tomfoolery");
+        testerButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                testerButtonActionPerformed(evt);
             }
         });
 
@@ -241,7 +251,8 @@ public class Interface extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(265, 265, 265)
+                        .addComponent(testerButton)
+                        .addGap(192, 192, 192)
                         .addComponent(addNoteButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(deleteNoteButton)
@@ -264,7 +275,8 @@ public class Interface extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(exportButton)
                     .addComponent(addNoteButton)
-                    .addComponent(deleteNoteButton))
+                    .addComponent(deleteNoteButton)
+                    .addComponent(testerButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -294,6 +306,10 @@ public class Interface extends javax.swing.JFrame {
                 }
                 role.sortNotes();
             }
+        }
+        
+        if(prefs.Autosave()) {
+            saveShow(showFile);
         }
     }//GEN-LAST:event_addNoteButtonActionPerformed
 
@@ -327,9 +343,9 @@ public class Interface extends javax.swing.JFrame {
     private void openShowMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openShowMenuButtonActionPerformed
         openFileChooser.setCurrentDirectory(new File("./out/"));
         openFileChooser.showOpenDialog(this);
-        File file = openFileChooser.getSelectedFile();
+        showFile = openFileChooser.getSelectedFile();
         try {
-            show = new Show(file);
+            show = new Show(showFile);
             show.sortRoles();
         } catch (ClassNotFoundException | FileNotFoundException ex) {
             Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
@@ -410,6 +426,23 @@ public class Interface extends javax.swing.JFrame {
         
         
     }//GEN-LAST:event_optionsMenuButtonActionPerformed
+
+    private void testerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testerButtonActionPerformed
+        DateTime dt = getDateInput();
+        
+        for (Role role : show.getCharacterList()) {
+            // Only make an output file if there are lines to be written.
+            if (!role.getNotes().isEmpty()) {
+                JSONWriter writer = new JSONWriter(role.getNotes(), show.getDirectory(), show.getTitle());
+                try {
+                    System.out.println("Storing JSON data.");
+                    writer.storeJsonData(role.getName());
+                } catch (IOException ex) {
+                    Logger.getLogger(Interface.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+    }//GEN-LAST:event_testerButtonActionPerformed
     
     private int exportData() throws IOException, FileNotFoundException, DocumentException {
         DateTime dt = getDateInput();
@@ -423,8 +456,8 @@ public class Interface extends javax.swing.JFrame {
                 errors += data.format();
                 
                 // Save the output for a later date
-                XWriter writer = new XWriter(role.getNotes(), show.getDirectory(), show.getTitle());
-                writer.storeData(role.getName());
+                JSONWriter writer = new JSONWriter(role.getNotes(), show.getDirectory(), show.getTitle());
+                writer.storeXMLData(role.getName());
             }
         }
         return errors;
@@ -444,6 +477,15 @@ public class Interface extends javax.swing.JFrame {
         return dt;
     }
         
+    private void setup() {
+        characters = new DefaultListModel<>();
+        notes = new DefaultListModel<>();
+        charactersComboBox = new DefaultComboBoxModel<>();
+        
+        prefs = new Preferences(true, true, true, "hope.edu"); // replace when you load the json show file
+        
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -521,6 +563,7 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JFileChooser saveFileChooser;
     private javax.swing.JMenuItem saveShowMenuButton;
     private javax.swing.JMenu showMenu;
+    private javax.swing.JButton testerButton;
     // End of variables declaration//GEN-END:variables
     private final ListSelectionListener characterListListener = new ListSelectionListener() {
         @Override
