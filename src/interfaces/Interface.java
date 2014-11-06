@@ -34,9 +34,14 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
 import meta.Role;
 import meta.Show;
 import meta.LineNote;
+import meta.NotesTableModel;
 import org.joda.time.DateTime;
 import preferences.Preferences;
 
@@ -56,11 +61,12 @@ import preferences.Preferences;
  */
 public class Interface extends javax.swing.JFrame {
     private DefaultListModel characters;
-    private DefaultListModel notes;
+    private DefaultTableModel notes;
     private DefaultComboBoxModel charactersComboBox;
     private Show show;
     private File showFile;
     private Preferences prefs;
+    private NotesTableModel notesTableModel;
     
     /**
      * Creates new form Interface
@@ -69,7 +75,7 @@ public class Interface extends javax.swing.JFrame {
         setup();
         initComponents();
         characterList.addListSelectionListener(characterListListener);
-        notesList.addListSelectionListener(notesListListener);
+        //notesTable.addListSelectionListener(notesTableListener);
     }
 
     /**
@@ -87,10 +93,10 @@ public class Interface extends javax.swing.JFrame {
         saveFileChooser = new javax.swing.JFileChooser();
         openFileChooser = new javax.swing.JFileChooser(".");
         jSplitPane1 = new javax.swing.JSplitPane();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        notesList = new javax.swing.JList();
         jScrollPane3 = new javax.swing.JScrollPane();
         characterList = new javax.swing.JList();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        notesTable = new javax.swing.JTable();
         exportButton = new javax.swing.JButton();
         addNoteButton = new javax.swing.JButton();
         deleteNoteButton = new javax.swing.JButton();
@@ -119,14 +125,6 @@ public class Interface extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Line Notes Editor");
 
-        notesList.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.LOWERED));
-        notesList.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        notesList.setModel(notes);
-        notesList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane2.setViewportView(notesList);
-
-        jSplitPane1.setRightComponent(jScrollPane2);
-
         jScrollPane3.setMinimumSize(new java.awt.Dimension(60, 60));
 
         characterList.setModel(characters);
@@ -136,6 +134,13 @@ public class Interface extends javax.swing.JFrame {
         jScrollPane3.setViewportView(characterList);
 
         jSplitPane1.setLeftComponent(jScrollPane3);
+
+        notesTable.setModel(notesTableModel);
+        notesTable.setColumnSelectionAllowed(true);
+        jScrollPane1.setViewportView(notesTable);
+        notesTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+
+        jSplitPane1.setRightComponent(jScrollPane1);
 
         exportButton.setText("Export Notes");
         exportButton.addActionListener(new java.awt.event.ActionListener() {
@@ -299,10 +304,10 @@ public class Interface extends javax.swing.JFrame {
             if (dialog.getCharacterName().equals(role.getName())) {
                 role.addNote(noteReturned);
                 if (role.getNotes().size() == 1) {
-                    notes.removeElementAt(0);
+                    //notes.removeElementAt(0);
                 }
                 if (charName.equals(role.getName())) {
-                    notes.addElement(noteReturned);
+                    //notes.addElement(noteReturned);
                 }
                 role.sortNotes();
             }
@@ -331,11 +336,11 @@ public class Interface extends javax.swing.JFrame {
     private void deleteNoteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteNoteButtonActionPerformed
         for (Role role : show.getCharacterList()) {
             if (role.getName().equals(characterList.getSelectedValue().toString())) {
-                int index = notesList.getSelectedIndex();
-                role.removeNote(index);
+                //int index = notesTable.getSelectedIndex();
+               // role.removeNote(index);
                 role.sortNotes();
-                notes.removeElementAt(index);
-                notesList.setModel(notes);
+                //notes.removeElementAt(index);
+                notesTable.setModel(notes);
             }
         }
     }//GEN-LAST:event_deleteNoteButtonActionPerformed
@@ -479,7 +484,14 @@ public class Interface extends javax.swing.JFrame {
         
     private void setup() {
         characters = new DefaultListModel<>();
-        notes = new DefaultListModel<>();
+        notesTableModel = new NotesTableModel();
+        ArrayList<String> list = new ArrayList<>();
+        list.add("Page");
+        list.add("Line");
+        list.add("Error");
+        list.add("Note");
+        notesTableModel.addColumns(list);
+        
         charactersComboBox = new DefaultComboBoxModel<>();
         
         prefs = new Preferences(true, true, true, "hope.edu"); // replace when you load the json show file
@@ -548,7 +560,7 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JOptionPane jOptionPane1;
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
@@ -556,7 +568,7 @@ public class Interface extends javax.swing.JFrame {
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem newShowMenuButton;
     private javax.swing.JPopupMenu noteRightClickMenu;
-    private javax.swing.JList notesList;
+    private javax.swing.JTable notesTable;
     private javax.swing.JFileChooser openFileChooser;
     private javax.swing.JMenuItem openShowMenuButton;
     private javax.swing.JMenuItem optionsMenuButton;
@@ -569,18 +581,18 @@ public class Interface extends javax.swing.JFrame {
         @Override
             public void valueChanged(ListSelectionEvent arg0) {
                 if (!arg0.getValueIsAdjusting()) {
-                    notes.clear();
+                    //notes.clear();
                     
                     String roleName = characterList.getSelectedValue().toString();
                     for (Role role : show.getCharacterList()) {
                         if (role.getName().equals(roleName)) {
                             if (role.getNotes().isEmpty()) {
-                                notes.addElement("No notes found.");
+                                //notes.addElement("No notes found.");
                             } else {
                                 role.sortNotes();
                                 for (LineNote note : role.getNotes()) {
-                                    //LineNote newNote = htmlify(note);
-                                    notes.addElement(note);
+                                    //notes.addElement(note);
+                                    notesTableModel.addRow(note);
                                     
                                 }
                             }
@@ -589,15 +601,11 @@ public class Interface extends javax.swing.JFrame {
                 }
             }
     };
-    private ListSelectionListener notesListListener = new ListSelectionListener() {
+    private final TableModelListener notesTableListener = new TableModelListener() {
         @Override
-            public void valueChanged(ListSelectionEvent arg0) {
-                if (!arg0.getValueIsAdjusting()) {
-                    // NullPointerException when switching characters unless you check if the notesList is null
-                    if (notesList != null || !notesList.getSelectedValue().toString().equals("No notes found.")) {
-                        deleteNoteButton.setEnabled(true);
-                    }   
-                }
-            }
+        public void tableChanged(TableModelEvent e) {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+        
     };
 }
