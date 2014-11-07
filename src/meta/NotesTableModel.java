@@ -53,8 +53,8 @@ public class NotesTableModel extends AbstractTableModel {
     }
 
     @Override
-    public Object getValueAt(int row, int col) {
-        return data.get(row).get(col);
+    public String getValueAt(int row, int col) {
+        return data.get(row).get(col).toString();
     }
     
     @Override
@@ -71,14 +71,33 @@ public class NotesTableModel extends AbstractTableModel {
     }
     
     @Override
+    public Class getColumnClass(int c)
+    {
+        return getValueAt(0, c).getClass();
+    }
+    
+    public LineNote getRow(int index) {
+        // pagenum, line, error, note
+        ArrayList<String> lines = data.get(index);
+        
+        // line, error, pagenum, note
+        return new LineNote(lines.get(1), lines.get(2), lines.get(0), lines.get(3));
+    }
+    
+    @Override
     public boolean isCellEditable(int row, int col)
     {
         return false;
     }
     
-    @Override
-    public Class getColumnClass(int c)
-    {
-        return getValueAt(0, c).getClass();
+    public void setRowCount(int num) {
+        while (data.size() > num) {
+            data.remove(0);
+        }
+    }
+    
+    public void removeRow(int index) {
+        data.remove(index);
+        fireTableRowsDeleted(0, data.size() - 1);
     }
 }

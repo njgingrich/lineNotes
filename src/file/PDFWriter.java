@@ -59,7 +59,9 @@ public class PDFWriter {
     public PDFWriter(Role role, DateTime date, String title) throws FileNotFoundException, DocumentException {
         this.role = role;
         this.date = date;
-        directory = "out/" + title + "/notes/";
+        directory = "out/" + title + "/notes/" + 
+                             date.monthOfYear().getAsString() + "-" +
+                             date.dayOfMonth().getAsString() + "/";
         setFontStyles();
         
         System.out.println(directory + 
@@ -74,6 +76,7 @@ public class PDFWriter {
                              date.monthOfYear().getAsString() + "-" +
                              date.dayOfMonth().getAsString() + "-" +
                              date.year().get() + ".pdf");
+        file.getParentFile().mkdirs();
         FileOutputStream fileout = new FileOutputStream(file);
         document = new Document();
         PdfWriter.getInstance(document, fileout);

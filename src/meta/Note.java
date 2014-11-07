@@ -14,24 +14,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package file;
-
-import java.io.File;
+package meta;
 
 /**
- * File Filter for only allowing .show files
+ *
  * @author Nathan
  */
-public class ShowFileFilter extends javax.swing.filechooser.FileFilter {
-        @Override
-        public boolean accept(File file) {
-            // Allow only directories, or files with ".txt" extension
-            return file.isDirectory() || file.getAbsolutePath().endsWith(".json");
-        }
-        @Override
-        public String getDescription() {
-            // This description will be displayed in the dialog,
-            // hard-coded = ugly, should be done via I18N
-            return "Show files (*.json)";
-        }
+public enum Note {
+    DROPPED("Dropped"),
+    ADDED("Added"),
+    WRONG_WORD("Wrong Word"),
+    WRONG_ORDER("Wrong Order"),
+    CALLED_LINE("Called Line"),
+    CHECK_LINE("Check Line"),
+    JUMPED_LINE("Jumped Line");
+    
+    private final String name;
+    
+    private Note(String name) {
+        this.name = name;
     }
+    
+    public String getName() {
+        return name;
+    }
+}

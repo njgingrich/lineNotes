@@ -16,11 +16,15 @@
  */
 package meta;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 /**
  *
  * @author Nathan
  */
 public class LineNote {
+    //private ArrayList<HashMap<String, Integer>> error;
     private final String error;
     private final String line;
     private final String note;
