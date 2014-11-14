@@ -36,6 +36,7 @@ public class XWriter {
      * Create a new XMLWriter to write the notes to the given directory
      * @param notes the notes to write
      * @param directory the given directory to write to
+     * @param title
      */
     public XWriter(ArrayList<LineNote> notes, String directory, String title) {
         this.directory = directory + "/" + title + "/";

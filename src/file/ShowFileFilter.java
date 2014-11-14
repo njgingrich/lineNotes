@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Nathan
+ * Copyright (C) 2014 Nathan Gingrich
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@ package file;
 import java.io.File;
 
 /**
- * File Filter for only allowing .show files
- * @author Nathan
+ * File Filter for only allowing .json files when opening a show
+ * @author Nathan Gingrich
  */
 public class ShowFileFilter extends javax.swing.filechooser.FileFilter {
         @Override

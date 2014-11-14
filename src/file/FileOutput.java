@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Nathan
+ * Copyright (C) 2014 Nathan Gingrich
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,18 +23,11 @@ import java.io.IOException;
 
 /**
  * For outputting data to be saved
- * @author Nathan
+ * @author Nathan Gingrich
  */
 public class FileOutput {    
     /**
-     * 
-     */
-    public FileOutput() {
-        
-    }
-    
-    /**
-     * Save the data to disk
+     * Save the data to disk to the given file
      * @param fileName
      * @param data
      */

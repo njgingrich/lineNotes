@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Nathan
+ * Copyright (C) 2014 Nathan Gingrich
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,15 +27,16 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import org.joda.time.DateTime;
+import meta.Role;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import meta.Role;
-import org.joda.time.DateTime;
 
 /**
- *
- * @author Nathan
+ * Create a new PDF writer (one should be created for each actor) to write out
+ * @author Nathan Gingrich
  */
 public class PDFWriter {
     private final String directory;
@@ -53,6 +54,7 @@ public class PDFWriter {
      * Create a PDF Writer to write line notes to disk
      * @param role the role
      * @param date the rehearsal date
+     * @param title the title of the show
      * @throws FileNotFoundException
      * @throws DocumentException
      */
@@ -85,6 +87,9 @@ public class PDFWriter {
         document.open();
     }
 
+    /**
+     * Set the font styles for the PDF
+     */
     private void setFontStyles() {
         lineFont = new Font(FontFamily.TIMES_ROMAN);
         lineFontUnderline = new Font(FontFamily.TIMES_ROMAN);
@@ -112,6 +117,11 @@ public class PDFWriter {
         addErrorTableToPDF(errorIX);
     }
 
+    /**
+     * Adds the table of possible errors to the PDF
+     * @param errorIX the specific error to be bolded
+     * @throws DocumentException 
+     */
     private void addErrorTableToPDF(int errorIX) throws DocumentException {
         PdfPTable errorTable = new PdfPTable(7);
         errorTable.setWidthPercentage(100);
@@ -129,6 +139,12 @@ public class PDFWriter {
         document.add(errorTable);
     }
 
+    /**
+     * Add the page number and line to the PDF
+     * @param splitLines the array of line segments to print
+     * @param page the page number the line was on
+     * @throws DocumentException 
+     */
     private void addLineTableToPDF(String[] splitLines, String page) throws DocumentException {
         PdfPTable lineTable = new PdfPTable(2);
         PdfPCell pageCell = new PdfPCell(new Paragraph("Page: " + page, lineFont));

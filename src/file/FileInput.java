@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Nathan
+ * Copyright (C) 2014 Nathan Gingrich
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,17 +17,18 @@
 package file;
 
 import file.json.JSONReader;
+import meta.LineNote;
+import meta.Role;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import meta.LineNote;
-import meta.Role;
 /**
- *
- * @author Nathan
+ * Create a file input for a JSON file, either the show file or saved line notes.
+ * @author Nathan Gingrich
  */
 public class FileInput {
     BufferedReader in;
@@ -36,7 +37,7 @@ public class FileInput {
 
     /**
      * Create a new FileInput with the given file
-     * @param f
+     * @param f the file to input
      * @throws FileNotFoundException
      */
     public FileInput(File f) throws FileNotFoundException {
@@ -72,6 +73,7 @@ public class FileInput {
     }
     
     /**
+     * Return the directory of the file you want input from.
      * @return the directory
      */
     public String getDirectory() {

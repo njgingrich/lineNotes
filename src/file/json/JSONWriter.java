@@ -68,6 +68,11 @@ public class JSONWriter {
         }
     }
     
+    /**
+     *
+     * @param characterName
+     * @throws IOException
+     */
     public void storeJsonData(String characterName) throws IOException {
         //String newFileLocation = directory + characterName.replaceAll(" ", "") + ".json";
         String newFileLocation = "out/Urinetown/notes/saved/" + characterName.replaceAll(" ", "") + ".json";

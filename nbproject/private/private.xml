@@ -3,15 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Nathan/Documents/Programming/Projects/2014/lineNotes/src/interfaces/Interface.java</file>
-            <file>file:/C:/Users/Nathan/Documents/Programming/Projects/2014/lineNotes/src/file/json/JSONReader.java</file>
-            <file>file:/C:/Users/Nathan/Documents/Programming/Projects/2014/lineNotes/src/file/FormatOutputData.java</file>
-            <file>file:/C:/Users/Nathan/Documents/Programming/Projects/2014/lineNotes/src/interfaces/LineNoteDialog.java</file>
-            <file>file:/C:/Users/Nathan/Documents/Programming/Projects/2014/lineNotes/src/meta/Show.java</file>
-            <file>file:/C:/Users/Nathan/Documents/Programming/Projects/2014/lineNotes/src/file/json/JSONWriter.java</file>
-            <file>file:/C:/Users/Nathan/Documents/Programming/Projects/2014/lineNotes/src/file/FileInput.java</file>
-            <file>file:/C:/Users/Nathan/Documents/Programming/Projects/2014/lineNotes/src/meta/Role.java</file>
-            <file>file:/C:/Users/Nathan/Documents/Programming/Projects/2014/lineNotes/src/meta/NotesTableModel.java</file>
+            <file>file:/C:/Users/Nathan/Documents/Programming/Projects/2014/lineNotes/src/file/XReader.java</file>
         </group>
     </open-files>
 </project-private>

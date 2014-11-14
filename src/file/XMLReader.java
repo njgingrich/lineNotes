@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Nathan
+ * Copyright (C) 2014 Nathan Gingrich
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,18 +17,19 @@
 package file;
 
 import com.thoughtworks.xstream.XStream;
+import meta.LineNote;
+import meta.Role;
+
 import java.io.BufferedReader;
 import java.io.EOFException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
-import meta.LineNote;
-import meta.Role;
 
 /**
- *
- * @author Nathan
+ * Create a new XML reader (Deprecated)
+ * @author Nathan Gingrich
  */
 public class XMLReader {
     private final BufferedReader reader;

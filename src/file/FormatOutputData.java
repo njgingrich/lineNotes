@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Nathan
+ * Copyright (C) 2014 Nathan Gingrich
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,15 +17,15 @@
 package file;
 
 import com.itextpdf.text.DocumentException;
-import java.io.FileNotFoundException;
-import java.util.Calendar;
 import meta.LineNote;
 import meta.Role;
 import org.joda.time.DateTime;
 
+import java.io.FileNotFoundException;
+
 /**
- *
- * @author Nathan
+ * Change the given data into a format that can be easily exported to PDF
+ * @author Nathan Gingrich
  */
 public class FormatOutputData {
     private int noteIX;
@@ -38,6 +38,7 @@ public class FormatOutputData {
      * Format the data to be outputted to PDF
      * @param role the role
      * @param date the rehearsal date
+     * @param title the title of the show
      * @throws FileNotFoundException
      * @throws DocumentException
      */
@@ -60,10 +61,10 @@ public class FormatOutputData {
 
     /**
      * Find the section of the line that should be bolded, given an error
+     * @return 
      * @throws DocumentException
      * @throws FileNotFoundException
      */
-    
     public int format() throws DocumentException, FileNotFoundException {
         int errors = 0;
         writer.makePDFHeader();
